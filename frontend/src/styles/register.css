@@ -1,0 +1,297 @@
+/* ============================================================
+   SkillAsAService — register.css
+   Styles for the two-column Register page (Praveen Gorla)
+   Aligned to design-system variables from variables.css
+   ============================================================ */
+
+/* ── Two-column layout ── */
+.auth-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: stretch;
+}
+
+/* ── Left panel (brand hero) ── */
+.auth-left {
+  flex: 1;
+  background: linear-gradient(145deg, var(--color-bg) 0%, var(--color-bg-secondary) 50%, var(--brand-blue) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 48px;
+  position: relative;
+  overflow: hidden;
+}
+.auth-left::before {
+  content: '';
+  position: absolute;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(26,159,224,0.18) 0%, transparent 70%);
+  top: -100px; right: -100px;
+}
+.auth-left::after {
+  content: '';
+  position: absolute;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(253,196,73,0.12) 0%, transparent 70%);
+  bottom: 50px; left: -50px;
+}
+
+/* ── Right panel (form) ── */
+.auth-right {
+  width: 520px;
+  min-width: 420px;
+  background: var(--color-bg-secondary);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 48px;
+  overflow-y: auto;
+}
+
+.auth-title {
+  font-family: var(--font-family);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-2);
+  color: var(--color-text);
+}
+.auth-subtitle {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-8);
+  font-size: var(--font-size-base);
+}
+
+/* ── Mobile logo (hidden on desktop) ── */
+.mobile-logo {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+/* ── Role Selector ── */
+.role-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.role-card {
+  padding: 18px 16px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-input);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  text-align: center;
+}
+.role-card:hover   { border-color: var(--color-primary); background: rgba(26,159,224,0.06); }
+.role-card.active  { border-color: var(--color-primary); background: rgba(26,159,224,0.12); }
+.role-card .role-icon  { font-size: 2rem; margin-bottom: 8px; }
+.role-card .role-label { font-weight: var(--font-weight-semibold); font-size: var(--font-size-sm); color: var(--color-text); }
+.role-card .role-desc  { font-size: var(--font-size-xs); color: var(--color-text-muted); margin-top: 4px; }
+
+/* ── Social grid (3-up on register) ── */
+.social-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.social-btn-reg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-bg-input);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  font-family: var(--font-family);
+}
+.social-btn-reg:hover {
+  border-color: var(--color-border-focus);
+  color: var(--color-text);
+  background: var(--color-bg-hover);
+  transform: translateY(-2px);
+}
+
+/* ── Divider ── */
+.reg-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  margin: 20px 0;
+}
+.reg-divider::before, .reg-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+/* ── Form helpers ── */
+.reg-form-group { margin-bottom: 18px; }
+.reg-label {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  margin-bottom: 6px;
+  letter-spacing: 0.02em;
+}
+.reg-control {
+  width: 100%;
+  padding: 10px 12px 10px 38px;
+  background: var(--color-bg-input);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+.reg-control::placeholder { color: var(--color-text-muted); }
+.reg-control:focus {
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px rgba(26,159,224,0.12);
+}
+.reg-control.is-invalid {
+  border-color: var(--color-danger);
+  box-shadow: 0 0 0 3px rgba(255,83,112,0.10);
+}
+.reg-control.is-valid {
+  border-color: var(--color-success);
+  box-shadow: 0 0 0 3px rgba(100,255,218,0.10);
+}
+.reg-control.no-icon { padding-left: 12px; }
+
+.invalid-feedback {
+  color: var(--color-danger);
+  font-size: var(--font-size-xs);
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── Input group (icon inside) ── */
+.input-group { position: relative; }
+.input-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+.input-icon-right {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color var(--transition-fast);
+}
+.input-icon-right:hover { color: var(--color-primary); }
+
+/* ── Password strength ── */
+.strength-bar-wrap {
+  display: flex;
+  gap: 4px;
+  margin: 8px 0 4px;
+}
+.strength-segment {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-border);
+  transition: background var(--transition-base);
+}
+
+/* ── Password checklist ── */
+.pwd-rules {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  margin-top: 8px;
+}
+.pwd-rules-title {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-bottom: 8px;
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.pwd-rule-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+  font-size: 0.78rem;
+  transition: color var(--transition-fast);
+}
+.pwd-rule-item:last-child { margin-bottom: 0; }
+
+/* ── Checkbox ── */
+.form-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+.form-check input[type="checkbox"] {
+  width: 16px; height: 16px;
+  accent-color: var(--color-primary);
+  flex-shrink: 0;
+  margin-top: 3px;
+  cursor: pointer;
+}
+.form-check-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+/* ── Trust badges ── */
+.trust-badges {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 8px;
+}
+.trust-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* ── Responsive ── */
+@media (max-width: 992px) {
+  .auth-left    { display: none; }
+  .auth-right   { width: 100%; min-width: unset; padding: 40px 28px; }
+  .mobile-logo  { display: flex; }
+}
+@media (max-width: 480px) {
+  .auth-right    { padding: 32px 20px; }
+  .social-grid   { grid-template-columns: 1fr; }
+  .role-selector { grid-template-columns: 1fr; }
+}
