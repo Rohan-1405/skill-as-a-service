@@ -1,0 +1,4 @@
+/* Base reset — detailed styles live in src/styles/global.css */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
