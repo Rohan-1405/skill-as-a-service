@@ -1,0 +1,46 @@
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: skillasaservice-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Fusion5@2026
+      MYSQL_USER: fusion5user
+      MYSQL_PASSWORD: Fusion5@2026
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - skillasaservice-network
+
+  redis:
+    image: redis:7.2
+    container_name: skillasaservice-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - skillasaservice-network
+
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: skillasaservice-rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: fusion5
+      RABBITMQ_DEFAULT_PASS: Fusion5@2026
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - skillasaservice-network
+
+volumes:
+  mysql_data:
+
+networks:
+  skillasaservice-network:
+    driver: bridge

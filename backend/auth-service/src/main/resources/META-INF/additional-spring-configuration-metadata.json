@@ -1,0 +1,42 @@
+{"properties": [
+  {
+    "name": "rabbitmq.queue.email",
+    "type": "java.lang.String",
+    "description": "A description for 'rabbitmq.queue.email'"
+  },
+  {
+    "name": "jwt.secret",
+    "type": "java.lang.String",
+    "description": "A description for 'jwt.secret'"
+  },
+  {
+    "name": "jwt.access-token-expiry",
+    "type": "java.lang.String",
+    "description": "A description for 'jwt.access-token-expiry'"
+  },
+  {
+    "name": "jwt.refresh-token-expiry",
+    "type": "java.lang.String",
+    "description": "A description for 'jwt.refresh-token-expiry'"
+  },
+  {
+    "name": "rabbitmq.queue.notification",
+    "type": "java.lang.String",
+    "description": "A description for 'rabbitmq.queue.notification'"
+  },
+  {
+    "name": "rabbitmq.exchange",
+    "type": "java.lang.String",
+    "description": "A description for 'rabbitmq.exchange'"
+  },
+  {
+    "name": "rabbitmq.routing.email",
+    "type": "java.lang.String",
+    "description": "A description for 'rabbitmq.routing.email'"
+  },
+  {
+    "name": "rabbitmq.routing.notification",
+    "type": "java.lang.String",
+    "description": "A description for 'rabbitmq.routing.notification'"
+  }
+]}
