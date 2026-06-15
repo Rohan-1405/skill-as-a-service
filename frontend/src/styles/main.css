@@ -1,0 +1,9 @@
+/* ============================================================
+   SkillAsAService — main.css
+   Import order matters: variables → global → auth → toastify overrides
+   ============================================================ */
+
+@import './variables.css';
+@import './global.css';
+@import './auth.css';
+@import './register.css';
