@@ -132,12 +132,15 @@ export default function DashboardHeader({
           text-overflow: ellipsis;
           line-height: 1.2;
         }
-        .saas-header__page-subtitle {
-          font-size: var(--font-size-xs);
-          color: var(--color-text-muted);
-          margin-top: 1px;
-          white-space: nowrap;
-        }
+       .saas-header__page-subtitle {
+  font-size: var(--font-size-xs);
+  color: #5ecfff;
+  margin-top: 1px;
+  white-space: nowrap;
+  text-shadow:
+    0 0 8px rgba(26,159,224,0.5),
+    0 0 16px rgba(26,159,224,0.3);
+}
 
         /* ---- spacer ---- */
         .saas-header__spacer { flex: 1; }
@@ -152,7 +155,7 @@ export default function DashboardHeader({
           left: 12px;
           top: 50%;
           transform: translateY(-50%);
-          color: var(--color-text-muted);
+          color: #00d9ff;
           pointer-events: none;
           display: flex;
           transition: color var(--transition-fast);
@@ -160,47 +163,59 @@ export default function DashboardHeader({
         .saas-header__search.focused .saas-header__search-icon {
           color: var(--color-primary);
         }
-        .saas-header__search-input {
-          width: 100%;
-          background: var(--color-bg-input);
-          border: 1.5px solid var(--color-border);
-          border-radius: var(--radius-full);
-          color: var(--color-text);
-          font-family: var(--font-family);
-          font-size: var(--font-size-sm);
-          padding: 8px 16px 8px 38px;
-          outline: none;
-          transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-        }
-        .saas-header__search-input::placeholder { color: var(--color-text-muted); }
-        .saas-header__search-input:focus {
-          border-color: var(--color-border-focus);
-          box-shadow: 0 0 0 3px rgba(26,159,224,0.12);
-        }
+ .saas-header__search-input {
+  width: 100%;
+  background: rgba(0, 207, 255, 0.22);
+  border: 2px solid #00d9ff;
+  border-radius: 999px;
+   color: rgba(255,255,255,0.75);
+  padding: 8px 16px 8px 38px;
+  outline: none;
+
+  box-shadow:
+    inset 0 0 10px rgba(0, 217, 255, 0.25),
+    0 0 12px rgba(0, 217, 255, 0.4);
+
+  transition: all 0.3s ease;
+}
+
+.saas-header__search-input:hover {
+  background: rgba(0, 207, 255, 0.30);
+
+  box-shadow:
+    inset 0 0 15px rgba(0, 217, 255, 0.4),
+    0 0 18px rgba(0, 217, 255, 0.6);
+}
         @media (max-width: 640px) {
           .saas-header__search { display: none; }
         }
 
         /* ---- icon buttons ---- */
         .saas-header__icon-btn {
-          position: relative;
-          background: none;
-          border: none;
-          color: var(--color-text-secondary);
-          width: 40px;
-          height: 40px;
-          border-radius: var(--radius-sm);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          transition: background var(--transition-fast), color var(--transition-fast);
-          flex-shrink: 0;
-        }
-        .saas-header__icon-btn:hover {
-          background: var(--color-bg-hover);
-          color: var(--color-text);
-        }
+  position: relative;
+  background: rgba(0, 207, 255, 0.08);
+  border: 1px solid rgba(0, 207, 255, 0.15);
+  color: #00d9ff;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: all 0.3s ease;
+}
+
+.saas-header__icon-btn:hover {
+  background: rgba(0, 207, 255, 0.18);
+
+  box-shadow:
+    0 0 10px rgba(0, 217, 255, 0.5),
+    0 0 20px rgba(0, 217, 255, 0.3);
+
+  color: #ffffff;
+}
         .saas-header__icon-btn.active {
           color: var(--color-primary);
           background: rgba(26,159,224,0.1);
