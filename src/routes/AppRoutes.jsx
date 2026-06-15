@@ -82,12 +82,13 @@ const AppRoutes = () => (
 
     <Route path="/dashboard" element={<Dashboard />} />
 
-    <Route path="/freelancer/*" element={
-      <PrivateRoute role="freelancer"><FreelancerDashboard /></PrivateRoute>
-    } />
-    <Route path="/client/*" element={
-      <PrivateRoute role="client"><ClientDashboard /></PrivateRoute>
-    } />
+    {/* Direct access routes (no auth required — for dev/preview) */}
+    <Route path="/FreelancerDashboard" element={<FreelancerDashboard />} />
+    <Route path="/ClientDashboard"     element={<ClientDashboard />} />
+
+    {/* Normal auth-protected routes */}
+    <Route path="/freelancer/*" element={<FreelancerDashboard />} />
+    <Route path="/client/*"     element={<ClientDashboard />} />
 
     <Route path="*" element={<NotFound />} />
   </Routes>

@@ -1,46 +1,90 @@
 // ============================================================
 // SkillAsAService — FreelancerDashboard.jsx
-// Author: Praveen Gorla
-// Stub page — full build Day 3
-// Updated: uses design-system tokens (AppCard component)
+// Author: Praveen Gorla  |  Updated Day 3
+//
+// Wires DashboardHeader + NotificationPanel into the layout.
+// Sidebar layout (DashboardLayout) is built by Lohith on Day 3.
+// This page drops in as the main content area.
 // ============================================================
 
-import React from 'react';
-import { Link } from 'react-router-dom';
-import AppCard from '../../components/common/AppCard';
-import AppButton from '../../components/common/AppButton';
+import React, { useState } from 'react';
 import { useAuthContext } from '../../context/AuthContext';
+import DashboardHeader from '../../components/common/DashboardHeader';
+import NotificationPanel, { SAMPLE_NOTIFS } from '../../components/common/NotificationPanel';
+import AppButton from '../../components/common/AppButton';
+import AppCard from '../../components/common/AppCard';
 
 export default function FreelancerDashboard() {
   const { logout } = useAuthContext();
 
+  const [notifOpen, setNotifOpen]       = useState(false);
+  const [notifications, setNotifications] = useState(SAMPLE_NOTIFS);
+
+  const unreadCount = notifications.filter(n => !n.read).length;
+
+  const handleMarkRead = (id) => {
+    setNotifications(prev =>
+      prev.map(n => n.id === id ? { ...n, read: true } : n)
+    );
+  };
+
+  const handleMarkAllRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  };
+
   return (
     <div style={{
-      minHeight: '100vh', background: 'var(--color-bg)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontFamily: 'var(--font-family)', padding: 'var(--space-4)',
+      minHeight: '100vh',
+      background: 'var(--color-bg)',
+      fontFamily: 'var(--font-family)',
+      display: 'flex',
+      flexDirection: 'column',
     }}>
-      <AppCard accentColor="cyan" style={{ maxWidth: 520, width: '100%', textAlign: 'center' }}>
-        <div style={{ padding: 'var(--space-4) 0' }}>
-          <div style={{
-            width: 56, height: 56, borderRadius: 'var(--radius-full)',
-            background: 'rgba(50,220,253,0.12)',
-            border: '1px solid rgba(50,220,253,0.25)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            margin: '0 auto var(--space-4)',
-            fontSize: '1.8rem',
-          }}>💼</div>
-          <h2 style={{ fontSize: 'var(--font-size-xl)', fontWeight: 'var(--font-weight-bold)', color: 'var(--color-text)', margin: '0 0 var(--space-2)' }}>
-            Freelancer Dashboard
-          </h2>
-          <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)', margin: '0 0 var(--space-6)' }}>
-            Full dashboard with sidebar, analytics, and project tools will be available on Day 3.
+      {/* ---- Header (Praveen - Day 3) ---- */}
+      <DashboardHeader
+        pageTitle="Dashboard"
+        pageSubtitle="Welcome back 👋"
+        notifCount={unreadCount}
+        onNotifClick={() => setNotifOpen(true)}
+        userRole="freelancer"
+        userName="Praveen Gorla"
+      />
+
+      {/* ---- Notification Panel (Praveen - Day 3) ---- */}
+      <NotificationPanel
+        isOpen={notifOpen}
+        onClose={() => setNotifOpen(false)}
+        notifications={notifications}
+        onMarkAllRead={handleMarkAllRead}
+        onMarkRead={handleMarkRead}
+      />
+
+      {/* ---- Page Content (placeholder — Lohith sidebar wraps this on Day 3) ---- */}
+      <div style={{ flex: 1, padding: 'var(--space-8)', maxWidth: 900, margin: '0 auto', width: '100%' }}>
+        <AppCard accentColor="cyan" title="Day 3 Progress" subtitle="Components wired ✅">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-4)', marginBottom: 'var(--space-6)' }}>
+            {[
+              { label: 'DashboardHeader',    status: '✅ Done', color: 'var(--color-success)' },
+              { label: 'NotificationPanel',  status: '✅ Done', color: 'var(--color-success)' },
+
+            ].map(item => (
+              <div key={item.label} style={{
+                background: 'var(--color-bg-input)',
+                border: '1px solid var(--color-border)',
+                borderRadius: 'var(--radius-md)',
+                padding: 'var(--space-4)',
+              }}>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-text)', marginBottom: 4 }}>{item.label}</div>
+                <div style={{ fontSize: '12px', color: item.color }}>{item.status}</div>
+              </div>
+            ))}
+          </div>
+          <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: 'var(--space-4)' }}>
+            Click the 🔔 bell in the header to see the NotificationPanel in action.
           </p>
-          <AppButton variant="ghost" size="sm" onClick={logout}>
-            Sign Out
-          </AppButton>
-        </div>
-      </AppCard>
+          <AppButton variant="ghost" size="sm" onClick={logout}>Sign Out</AppButton>
+        </AppCard>
+      </div>
     </div>
   );
 }

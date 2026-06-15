@@ -61,12 +61,12 @@ function AuthLeftPanel() {
     <div className="auth-left">
       <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '460px' }}>
 
-        <div style={{ marginBottom: '48px' }}>
+        <div style={{ marginBottom: '8px', marginLeft: '-20px' }}>
           <img
             src={logo}
             alt="SkillAsAService"
             style={{
-              height: '140px', objectFit: 'contain',
+              height: '150px', objectFit: 'contain',
               filter: 'drop-shadow(0 4px 16px rgba(26,159,224,0.4))',
             }}
           />
@@ -173,8 +173,9 @@ export default function Register() {
 
         {/* Mobile Logo */}
         <div className="mobile-logo">
-          <img src={logo} alt="SkillAsAService" style={{ height: '70px', objectFit: 'contain' }} />
+          <img src={logo} alt="SkillAsAService" style={{ height: '115px', objectFit: 'contain' }} />
         </div>
+        
 
         <h2 className="auth-title">Create Your Account</h2>
         <p className="auth-subtitle">Start your subscription journey today</p>
@@ -230,7 +231,7 @@ export default function Register() {
             { icon: <FaGithub size={18} color="#fff" />,      label: 'GitHub',   provider: 'github' },
           ].map(s => (
             <button key={s.provider} type="button" className="social-btn-reg"
-              onClick={() => toast.info(`${s.label} OAuth — coming soon`)}>
+              onClick={() => toast.info(`${s.label}  — redirecting to`)}>
               {s.icon} {s.label}
             </button>
           ))}
