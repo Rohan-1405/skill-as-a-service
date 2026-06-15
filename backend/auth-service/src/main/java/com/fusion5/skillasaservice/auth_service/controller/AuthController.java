@@ -23,6 +23,14 @@ public class AuthController {
         return ResponseEntity.status(status).body(response);
     }
 
+    @GetMapping("/verify-email")
+    public ResponseEntity<ApiResponse<String>> verifyEmail(
+            @RequestParam("token") String token) {
+        ApiResponse<String> response = authService.verifyEmail(token);
+        HttpStatus status = response.isSuccess() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status).body(response);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthResponse>> login(
             @Valid @RequestBody LoginRequest request) {

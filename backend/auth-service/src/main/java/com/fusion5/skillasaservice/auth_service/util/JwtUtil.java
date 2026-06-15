@@ -45,6 +45,25 @@ public class JwtUtil {
                 .compact();
     }
 
+    public String generateEmailVerificationToken(String userId, String email, long expiry) {
+        return Jwts.builder()
+                .subject(userId)
+                .claim("email", email)
+                .claim("type", "EMAIL_VERIFICATION")
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expiry))
+                .signWith(getSigningKey())
+                .compact();
+    }
+
+    public String extractEmail(String token) {
+        return extractAllClaims(token).get("email", String.class);
+    }
+
+    public String extractTokenType(String token) {
+        return extractAllClaims(token).get("type", String.class);
+    }
+
     public Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())

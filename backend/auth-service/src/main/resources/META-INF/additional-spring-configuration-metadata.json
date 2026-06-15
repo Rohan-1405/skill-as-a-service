@@ -38,5 +38,20 @@
     "name": "rabbitmq.routing.notification",
     "type": "java.lang.String",
     "description": "A description for 'rabbitmq.routing.notification'"
+  },
+  {
+    "name": "app.email.verification-url",
+    "type": "java.lang.String",
+    "description": "A description for 'app.email.verification-url'"
+  },
+  {
+    "name": "app.email.from",
+    "type": "java.lang.String",
+    "description": "A description for 'app.email.from'"
+  },
+  {
+    "name": "app.email.verification-token-expiry",
+    "type": "java.lang.String",
+    "description": "A description for 'app.email.verification-token-expiry'"
   }
 ]}

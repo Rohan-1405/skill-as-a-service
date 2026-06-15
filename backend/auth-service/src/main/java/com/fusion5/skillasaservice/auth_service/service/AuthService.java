@@ -1,5 +1,6 @@
 package com.fusion5.skillasaservice.auth_service.service;
 
+import com.fusion5.skillasaservice.auth_service.dto.EmailEvent;
 import com.fusion5.skillasaservice.auth_service.dto.request.*;
 import com.fusion5.skillasaservice.auth_service.dto.response.*;
 import com.fusion5.skillasaservice.auth_service.entity.*;
@@ -7,6 +8,7 @@ import com.fusion5.skillasaservice.auth_service.repository.*;
 import com.fusion5.skillasaservice.auth_service.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,13 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final RedisTemplate<String, String> redisTemplate;
+    private final EmailProducer emailProducer;
+
+    @Value("${app.email.verification-url}")
+    private String verificationUrl;
+
+    @Value("${app.email.verification-token-expiry}")
+    private long verificationTokenExpiry;
 
     @Transactional
     public ApiResponse<String> register(RegisterRequest request) {
@@ -49,8 +58,82 @@ public class AuthService {
         userRepository.save(user);
         log.info("New user registered: {}", user.getEmail());
 
-        // TODO: Publish email verification event to RabbitMQ (Day 2)
-        return ApiResponse.success("Registration successful. Please verify your email.", user.getUuid());
+        // Generate email verification token (JWT, 24hr expiry)
+        String verificationToken = jwtUtil.generateEmailVerificationToken(
+                user.getUuid(), user.getEmail(), verificationTokenExpiry);
+
+        String verificationLink = verificationUrl + "?token=" + verificationToken;
+
+        String emailBody = "Hi " + user.getFirstName() + ",\n\n"
+                + "Welcome to SkillAsAService! Please verify your email address by clicking the link below:\n\n"
+                + verificationLink + "\n\n"
+                + "This link will expire in 24 hours.\n\n"
+                + "If you did not create this account, please ignore this email.\n\n"
+                + "Regards,\nSkillAsAService Team";
+
+        EmailEvent emailEvent = EmailEvent.builder()
+                .toEmail(user.getEmail())
+                .subject("Verify Your Email - SkillAsAService")
+                .body(emailBody)
+                .type(EmailEvent.EmailType.VERIFICATION)
+                .build();
+
+        emailProducer.sendEmailEvent(emailEvent);
+
+        return ApiResponse.success("Registration successful. Please check your email to verify your account.", user.getUuid());
+    }
+
+    @Transactional
+    public ApiResponse<String> verifyEmail(String token) {
+        if (!jwtUtil.isTokenValid(token)) {
+            return ApiResponse.error("Invalid or malformed verification token");
+        }
+
+        if (jwtUtil.isTokenExpired(token)) {
+            return ApiResponse.error("Verification link has expired. Please request a new one.");
+        }
+
+        String tokenType = jwtUtil.extractTokenType(token);
+        if (!"EMAIL_VERIFICATION".equals(tokenType)) {
+            return ApiResponse.error("Invalid token type");
+        }
+
+        String userUuid = jwtUtil.extractUserId(token);
+        String email = jwtUtil.extractEmail(token);
+
+        User user = userRepository.findByUuid(userUuid)
+                .orElse(null);
+
+        if (user == null || !user.getEmail().equals(email)) {
+            return ApiResponse.error("User not found or token mismatch");
+        }
+
+        if (user.getEmailVerified()) {
+            return ApiResponse.success("Email already verified. You can log in.", null);
+        }
+
+        user.setEmailVerified(true);
+        user.setStatus(User.UserStatus.ACTIVE);
+        userRepository.save(user);
+
+        log.info("Email verified successfully for user: {}", user.getEmail());
+
+        // Send welcome email
+        String welcomeBody = "Hi " + user.getFirstName() + ",\n\n"
+                + "Your email has been verified successfully! Your account is now active.\n\n"
+                + "You can now log in and start using SkillAsAService.\n\n"
+                + "Regards,\nSkillAsAService Team";
+
+        EmailEvent welcomeEvent = EmailEvent.builder()
+                .toEmail(user.getEmail())
+                .subject("Welcome to SkillAsAService - Account Verified")
+                .body(welcomeBody)
+                .type(EmailEvent.EmailType.WELCOME)
+                .build();
+
+        emailProducer.sendEmailEvent(welcomeEvent);
+
+        return ApiResponse.success("Email verified successfully. You can now log in.", null);
     }
 
     public ApiResponse<AuthResponse> login(LoginRequest request) {
