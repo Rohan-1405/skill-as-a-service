@@ -66,6 +66,7 @@ export default function DashboardHeader({
   userRole     = 'freelancer',
   userName     = 'User',
   userAvatar   = '',
+  onSignOut,           // ← NEW: called when user clicks "Sign Out" in dropdown
 }) {
   const [searchFocused, setSearchFocused] = useState(false);
   const [avatarMenuOpen, setAvatarMenuOpen] = useState(false);
@@ -479,7 +480,13 @@ export default function DashboardHeader({
                   </button>
                 ))}
                 <div className="saas-header__dropdown-divider" />
-                <button className="saas-header__dropdown-item danger">
+                <button
+                  className="saas-header__dropdown-item danger"
+                  onClick={() => {
+                    setAvatarMenuOpen(false);
+                    if (onSignOut) onSignOut();
+                  }}
+                >
                   <span>🚪</span>
                   <span>Sign Out</span>
                 </button>

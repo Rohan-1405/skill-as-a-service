@@ -11,6 +11,7 @@ import Dashboard         from '../pages/dashboard/Dashboard';
 // ---- Praveen's Pages (lazy) ----
 const Register            = lazy(() => import('../pages/auth/Register'));
 const FreelancerDashboard = lazy(() => import('../pages/freelancer/FreelancerDashboard'));
+const FreelancerProfile = lazy(() => import('../pages/freelancer/FreelancerProfile'));
 const ClientDashboard     = lazy(() => import('../pages/client/ClientDashboard'));
 
 // ---- Route Guards ----
@@ -89,6 +90,7 @@ const AppRoutes = () => (
     {/* Normal auth-protected routes */}
     <Route path="/freelancer/*" element={<FreelancerDashboard />} />
     <Route path="/client/*"     element={<ClientDashboard />} />
+    <Route path="/FreelancerProfile" element={<FreelancerProfile />} />
 
     <Route path="*" element={<NotFound />} />
   </Routes>

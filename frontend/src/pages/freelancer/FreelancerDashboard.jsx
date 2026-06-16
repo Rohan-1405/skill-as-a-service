@@ -2,12 +2,14 @@
 // SkillAsAService — FreelancerDashboard.jsx
 // Author: Praveen Gorla  |  Updated Day 3
 //
-// Wires DashboardHeader + NotificationPanel into the layout.
-// Sidebar layout (DashboardLayout) is built by Lohith on Day 3.
-// This page drops in as the main content area.
+// Changes:
+//   • Sign Out wired via useAuthContext().logout()
+//   • logout passed to DashboardHeader as onSignOut prop
+//   • NotificationPanel state managed here
 // ============================================================
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../../context/AuthContext';
 import DashboardHeader from '../../components/common/DashboardHeader';
 import NotificationPanel, { SAMPLE_NOTIFS } from '../../components/common/NotificationPanel';
@@ -16,8 +18,9 @@ import AppCard from '../../components/common/AppCard';
 
 export default function FreelancerDashboard() {
   const { logout } = useAuthContext();
+  const navigate   = useNavigate();
 
-  const [notifOpen, setNotifOpen]       = useState(false);
+  const [notifOpen, setNotifOpen]         = useState(false);
   const [notifications, setNotifications] = useState(SAMPLE_NOTIFS);
 
   const unreadCount = notifications.filter(n => !n.read).length;
@@ -32,6 +35,12 @@ export default function FreelancerDashboard() {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
   };
 
+  /* ---- Sign Out handler: clears auth then redirects to login ---- */
+  const handleSignOut = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -40,7 +49,7 @@ export default function FreelancerDashboard() {
       display: 'flex',
       flexDirection: 'column',
     }}>
-      {/* ---- Header (Praveen - Day 3) ---- */}
+      {/* ---- Header (Praveen - Day 3) — Sign Out wired ---- */}
       <DashboardHeader
         pageTitle="Dashboard"
         pageSubtitle="Welcome back 👋"
@@ -48,6 +57,7 @@ export default function FreelancerDashboard() {
         onNotifClick={() => setNotifOpen(true)}
         userRole="freelancer"
         userName="Praveen Gorla"
+        onSignOut={handleSignOut}
       />
 
       {/* ---- Notification Panel (Praveen - Day 3) ---- */}
@@ -59,14 +69,19 @@ export default function FreelancerDashboard() {
         onMarkRead={handleMarkRead}
       />
 
-      {/* ---- Page Content (placeholder — Lohith sidebar wraps this on Day 3) ---- */}
+      {/* ---- Page Content ---- */}
       <div style={{ flex: 1, padding: 'var(--space-8)', maxWidth: 900, margin: '0 auto', width: '100%' }}>
         <AppCard accentColor="cyan" title="Day 3 Progress" subtitle="Components wired ✅">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-4)', marginBottom: 'var(--space-6)' }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: 'var(--space-4)',
+            marginBottom: 'var(--space-6)',
+          }}>
             {[
-              { label: 'DashboardHeader',    status: '✅ Done', color: 'var(--color-success)' },
-              { label: 'NotificationPanel',  status: '✅ Done', color: 'var(--color-success)' },
-
+              { label: 'DashboardHeader',   status: '✅ Done', color: 'var(--color-success)' },
+              { label: 'NotificationPanel', status: '✅ Done', color: 'var(--color-success)' },
+              { label: 'Sign Out',          status: '✅ Wired', color: 'var(--color-success)' },
             ].map(item => (
               <div key={item.label} style={{
                 background: 'var(--color-bg-input)',
@@ -74,15 +89,22 @@ export default function FreelancerDashboard() {
                 borderRadius: 'var(--radius-md)',
                 padding: 'var(--space-4)',
               }}>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-text)', marginBottom: 4 }}>{item.label}</div>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-text)', marginBottom: 4 }}>
+                  {item.label}
+                </div>
                 <div style={{ fontSize: '12px', color: item.color }}>{item.status}</div>
               </div>
             ))}
           </div>
+
           <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: 'var(--space-4)' }}>
-            Click the 🔔 bell in the header to see the NotificationPanel in action.
+            Click the 🔔 bell in the header to see the NotificationPanel. Click your avatar → Sign Out to log out.
           </p>
-          <AppButton variant="ghost" size="sm" onClick={logout}>Sign Out</AppButton>
+
+          {/* Fallback Sign Out button in the card body as well */}
+          <AppButton variant="ghost" size="sm" onClick={handleSignOut}>
+            Sign Out
+          </AppButton>
         </AppCard>
       </div>
     </div>

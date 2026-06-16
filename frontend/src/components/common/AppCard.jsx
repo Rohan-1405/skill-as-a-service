@@ -75,7 +75,7 @@ const AppCard = ({
                 style={{
                   margin: '2px 0 0',
                   fontSize: 'var(--font-size-xs)',
-                  color: 'var(--color-text-muted)',
+                  color: '#dbeafe',
                   fontFamily: 'var(--font-family)',
                 }}
               >
