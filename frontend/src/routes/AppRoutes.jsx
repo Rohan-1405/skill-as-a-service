@@ -5,6 +5,7 @@ import ForgotPassword    from '../pages/auth/ForgotPassword';
 import ResetPassword     from '../pages/auth/ResetPassword';
 import EmailVerification from '../pages/auth/EmailVerification';
 import DashboardHome     from '../pages/dashboard/DashboardHome';
+import Profile           from '../pages/dashboard/Profile';
 import ComingSoon        from '../pages/ComingSoon';
 
 /**
@@ -34,7 +35,7 @@ const AppRoutes = () => {
       <Route path="/dashboard"    element={<DashboardHome />} />
 
       {/* Coming soon placeholders — prevents redirect to login when clicking sidebar */}
-      <Route path="/profile"       element={<ComingSoon title="My Profile"          day={4} />} />
+      <Route path="/profile"       element={<Profile />} />
       <Route path="/subscriptions" element={<ComingSoon title="Subscription Plans"  day={5} />} />
       <Route path="/subscribers"   element={<ComingSoon title="Subscribers"         day={5} />} />
       <Route path="/projects"      element={<ComingSoon title="Projects"            day={9} />} />

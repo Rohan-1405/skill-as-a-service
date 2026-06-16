@@ -27,7 +27,7 @@ const Login = () => {
 
       <div className="auth-heading">
         <h1>Welcome back</h1>
-        <p>Sign in to continue your learning journey</p>
+        <p>Sign in to make your work easier</p>
       </div>
 
       <LoginForm onSubmit={handleSubmit} />
