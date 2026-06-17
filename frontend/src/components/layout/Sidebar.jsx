@@ -3,6 +3,20 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../../context/AuthContext';
 import logo from '../../assets/logos/logo.png';
 
+/**
+ * Sidebar — Shared navigation sidebar for all portal dashboards.
+ *
+ * Changes v2:
+ *  - Logo area shows ONLY the logo image, no text next to it
+ *  - sidebarOpen prop controls visibility (toggled from DashboardLayout)
+ *  - NavLink items use <Link> (not <a href>) so they never redirect to login
+ *
+ * Props:
+ *   navItems    — array of { label, path, icon, section?, badge? }
+ *   portalName  — e.g. "Freelancer Portal"
+ *   sidebarOpen — boolean, controlled by DashboardLayout toggle button
+ *   onClose     — callback to close sidebar (mobile overlay tap)
+ */
 const Sidebar = ({ navItems = [], portalName = 'Dashboard', sidebarOpen = true, onClose }) => {
   const { logout } = useAuthContext();
   const navigate = useNavigate();
@@ -14,23 +28,16 @@ const Sidebar = ({ navItems = [], portalName = 'Dashboard', sidebarOpen = true, 
 
   return (
     <>
-      {/* Mobile overlay — only visible on small screens */}
-      <div
-        className={`sidebar-overlay${!sidebarOpen ? '' : ' visible'}`}
-        onClick={onClose}
-        aria-hidden="true"
-      />
-
       <aside
-        className={`sidebar${sidebarOpen ? '' : ' sidebar-collapsed'}`}
+        className={`sidebar${sidebarOpen ? ' sidebar-open' : ''}`}
         aria-label="Sidebar navigation"
       >
-        {/* ── Logo only — no text, no user strip ── */}
+        {/* ── Logo only — no text ── */}
         <NavLink to="/dashboard" className="sidebar-logo sidebar-logo-icon-only" aria-label="Go to dashboard">
           <img src={logo} alt="SkillAsAService" className="sidebar-logo-img" />
         </NavLink>
 
-        {/* ── Navigation — onClick removed so sidebar stays open ── */}
+        {/* ── Navigation ── */}
         <nav className="sidebar-nav" aria-label="Main navigation">
           {navItems.map((item) => (
             <React.Fragment key={item.path}>
@@ -42,6 +49,7 @@ const Sidebar = ({ navItems = [], portalName = 'Dashboard', sidebarOpen = true, 
               <NavLink
                 to={item.path}
                 className={({ isActive }) => `sidebar-item${isActive ? ' active' : ''}`}
+                onClick={onClose}
               >
                 <span className="sidebar-item-icon" aria-hidden="true">{item.icon}</span>
                 <span>{item.label}</span>

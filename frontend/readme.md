@@ -1,7 +1,5 @@
 # SkillAsAService — Frontend
 
-> **Sell Your Skills As A Subscription**
-> Subscribe • Learn • Grow
 
 A subscription-based freelancer marketplace platform built with React JS.
 Freelancers sell services as recurring subscriptions. Clients subscribe, collaborate, and manage projects.

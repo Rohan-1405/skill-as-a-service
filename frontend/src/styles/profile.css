@@ -1274,6 +1274,10 @@
    RESPONSIVE
    ════════════════════════════════════════ */
 
+/* ════════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════════ */
+
 @media (max-width: 1024px) {
   .profile-grid { grid-template-columns: 260px 1fr; }
 }
@@ -1282,18 +1286,19 @@
   .proj-cards-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
+/* ── Tablet (≤900px) ── */
 @media (max-width: 900px) {
   .profile-grid { grid-template-columns: 1fr; }
   .profile-view-body { grid-template-columns: 1fr; }
   .profile-view-sidebar { position: static; }
   .completeness-list { grid-template-columns: 1fr; }
   .profile-view-row { grid-template-columns: 1fr; }
+
+  /* Plan cards: 2 col on tablet instead of jumping straight to 1 */
+  .plans-cards-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-@media (max-width: 600px) {
-  .proj-cards-grid { grid-template-columns: 1fr; }
-}
-
+/* ── Tablet narrow / large phone (≤700px) ── */
 @media (max-width: 700px) {
   .project-editor-body { grid-template-columns: 1fr; }
   .project-thumb-drop { width: 100%; height: 130px; }
@@ -1302,6 +1307,76 @@
   .profile-save-btn { justify-content: center; }
   .profile-toast { left: 16px; right: 16px; bottom: 16px; }
   .plans-panel-top { flex-direction: column; }
+
+  /* Hero: stack avatar above info on small screens */
+  .profile-view-hero {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .profile-view-hero-info {
+    width: 100%;
+  }
+
+  .profile-view-location,
+  .profile-view-tagline {
+    text-align: center;
+  }
+
+  .profile-view-meta {
+    justify-content: center;
+  }
+
+  .hero-social-links {
+    justify-content: center;
+  }
+
+  /* Plan cards: 1 col on small screens */
+  .plans-cards-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Mobile (≤600px) ── */
+@media (max-width: 600px) {
+  .proj-cards-grid { grid-template-columns: 1fr; }
+
+  /* Edit mode: tighten up sections */
+  .profile-fields {
+    gap: var(--space-4);
+  }
+
+  .profile-col-left,
+  .profile-col-right {
+    padding: var(--space-4);
+  }
+}
+
+/* ── Small mobile (≤480px) ── */
+@media (max-width: 480px) {
+  /* Avatar smaller on tiny screens */
+  .profile-view-avatar {
+    width: 72px !important;
+    height: 72px !important;
+  }
+
+  .profile-view-name {
+    font-size: 18px;
+  }
+
+  .profile-view-tagline {
+    font-size: 13px;
+  }
+
+  /* Edit mode col padding */
+  .profile-col-left,
+  .profile-col-right {
+    padding: var(--space-3);
+  }
+
+  /* Skills tag input on tiny screens */
+  .skills-input-area {
+    padding: var(--space-2);
+  }
 }
 
 /* ════════════════════════════════════════
@@ -1410,8 +1485,4 @@
 .plan-card-btn:hover {
   opacity: 0.88;
   transform: translateY(-1px);
-}
-
-@media (max-width: 900px) {
-  .plans-cards-grid { grid-template-columns: 1fr; }
 }

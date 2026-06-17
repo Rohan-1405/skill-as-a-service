@@ -1,13 +1,15 @@
 /* ── Auth Layout ── */
 .auth-layout {
-  height: 100vh;
+  min-height: 100vh;
   width: 100vw;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--color-bg);
   position: relative;
+  padding: var(--space-6) var(--space-4);
 }
 
 .auth-layout::before {
@@ -524,16 +526,32 @@
 
 /* ── Responsive ── */
 @media (max-width: 540px) {
+  .auth-layout {
+    padding: var(--space-4) var(--space-3);
+    align-items: flex-start;
+  }
+
   .auth-card {
-    padding: 36px 28px 32px;
-    border-radius: var(--radius-lg);
+    padding: 28px 20px 24px;
+    border-radius: var(--radius-md);
+    width: 100%;
   }
 
   .auth-heading h1 {
-    font-size: 24px;
+    font-size: 20px;
+  }
+
+  .auth-logo-img {
+    height: 60px;
   }
 
   .social-buttons {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 360px) {
+  .auth-card {
+    padding: 24px 16px 20px;
   }
 }
