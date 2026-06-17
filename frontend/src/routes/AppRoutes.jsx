@@ -1,20 +1,27 @@
-import React, { lazy } from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 
-// ---- Auth Pages ----
+// ── Auth pages (Lohith) ──────────────────────────────────────
 import Login             from '../pages/auth/Login';
 import ForgotPassword    from '../pages/auth/ForgotPassword';
 import EmailVerification from '../pages/auth/EmailVerification';
 import Dashboard         from '../pages/dashboard/Dashboard';
 
-// ---- Praveen's Pages (lazy) ----
-const Register            = lazy(() => import('../pages/auth/Register'));
+// ── Praveen's pages ──────────────────────────────────────────
+// Day 1-2
+const Register = lazy(() => import('../pages/auth/Register'));
+// Day 3
 const FreelancerDashboard = lazy(() => import('../pages/freelancer/FreelancerDashboard'));
-const FreelancerProfile = lazy(() => import('../pages/freelancer/FreelancerProfile'));
 const ClientDashboard     = lazy(() => import('../pages/client/ClientDashboard'));
+// Day 4
+const FreelancerProfile   = lazy(() => import('../pages/freelancer/FreelancerProfile'));
+// Day 5  — Praveen's standalone plan creation forms page
+import PlanCreationForms  from '../pages/freelancer/PlanCreationForms';
+// Day 6  — Praveen's subscription purchase flow
+import SubscriptionPurchase from '../pages/client/SubscriptionPurchase';
 
-// ---- Route Guards ----
+// ── Route Guards ─────────────────────────────────────────────
 function PrivateRoute({ children, role }) {
   const { isAuthenticated } = useAuthContext();
   const userRole = localStorage.getItem('saas_role');
@@ -28,13 +35,12 @@ function PublicRoute({ children }) {
   const role = localStorage.getItem('saas_role');
   if (isAuthenticated) {
     if (role === 'freelancer') return <Navigate to="/freelancer/dashboard" replace />;
-    if (role === 'client')     return <Navigate to="/client/dashboard" replace />;
+    if (role === 'client')     return <Navigate to="/client/dashboard"     replace />;
     return <Navigate to="/dashboard" replace />;
   }
   return children;
 }
 
-// ---- 404 ----
 function NotFound() {
   return (
     <div style={{
@@ -47,53 +53,69 @@ function NotFound() {
       <h2 style={{ color: 'var(--color-text)', fontWeight: 700 }}>Page Not Found</h2>
       <p style={{ color: 'var(--color-text-muted)' }}>The page you're looking for doesn't exist.</p>
       <a href="/" style={{
-        background: 'var(--gradient-blue)',
-        color: '#fff', padding: '11px 28px',
-        borderRadius: 'var(--radius-sm)',
-        fontWeight: '600', textDecoration: 'none',
-        boxShadow: 'var(--shadow-btn)',
+        background: 'var(--gradient-blue)', color: '#fff',
+        padding: '11px 28px', borderRadius: 'var(--radius-sm)',
+        fontWeight: '600', textDecoration: 'none', boxShadow: 'var(--shadow-btn)',
       }}>Go Home</a>
     </div>
   );
 }
 
-/**
- * AppRoutes — Central routing.
- *
- * Auth flow: Register → /verify-email → /login → /dashboard
- *
- * Routes:
- *   /                      → /login
- *   /login                 → Login page (Lohith)
- *   /register              → Register page (Praveen)
- *   /verify-email          → Email Verification
- *   /forgot-password       → Forgot Password
- *   /dashboard             → Dashboard stub
- *   /freelancer/*          → FreelancerDashboard (Praveen, private)
- *   /client/*              → ClientDashboard (Praveen, private)
- */
+// ─────────────────────────────────────────────────────────────
+// ROUTE ORDER RULE: specific paths ALWAYS before /* wildcards
+// ─────────────────────────────────────────────────────────────
 const AppRoutes = () => (
-  <Routes>
-    <Route path="/" element={<Navigate to="/login" replace />} />
+  <Suspense fallback={<div style={{ minHeight: '100vh', background: 'var(--color-bg)' }} />}>
+    <Routes>
 
-    <Route path="/login"          element={<PublicRoute><Login /></PublicRoute>} />
-    <Route path="/register"       element={<PublicRoute><Register /></PublicRoute>} />
-    <Route path="/verify-email"   element={<EmailVerification />} />
-    <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
+      {/* Root */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
 
-    <Route path="/dashboard" element={<Dashboard />} />
+      {/* Auth — public */}
+      <Route path="/login"            element={<PublicRoute><Login /></PublicRoute>} />
+      <Route path="/register"         element={<PublicRoute><Register /></PublicRoute>} />
+      <Route path="/verify-email"     element={<EmailVerification />} />
+      <Route path="/forgot-password"  element={<PublicRoute><ForgotPassword /></PublicRoute>} />
 
-    {/* Direct access routes (no auth required — for dev/preview) */}
-    <Route path="/FreelancerDashboard" element={<FreelancerDashboard />} />
-    <Route path="/ClientDashboard"     element={<ClientDashboard />} />
+      {/* Generic dashboard */}
+      <Route path="/dashboard" element={<Dashboard />} />
 
-    {/* Normal auth-protected routes */}
-    <Route path="/freelancer/*" element={<FreelancerDashboard />} />
-    <Route path="/client/*"     element={<ClientDashboard />} />
-    <Route path="/FreelancerProfile" element={<FreelancerProfile />} />
+      {/* Dev preview shortcuts (no auth guard) */}
+      <Route path="/FreelancerDashboard" element={<FreelancerDashboard />} />
+      <Route path="/FreelancerProfile"   element={<FreelancerProfile />} />
+      <Route path="/ClientDashboard"     element={<ClientDashboard />} />
 
-    <Route path="*" element={<NotFound />} />
-  </Routes>
+      {/*
+        ── SPECIFIC freelancer routes ──
+        Must be declared BEFORE /freelancer/* wildcard.
+      */}
+      {/* Praveen Day 5 — standalone plan creation forms page */}
+      <Route path="/freelancer/plan-creation" element={<PlanCreationForms />} />
+
+      {/*
+        ── SPECIFIC client routes ──
+        Must be declared BEFORE /client/* wildcard.
+
+        FIX: was /freelancer/:id/subscribe (wrong — subscribing is a CLIENT action)
+             AND was placed after /freelancer/* wildcard so it never matched.
+        CORRECTED: /client/:id/subscribe, placed before /client/* wildcard.
+      */}
+      {/* Praveen Day 6 — subscription purchase flow */}
+      <Route path="/client/:id/subscribe" element={<SubscriptionPurchase />} />
+
+      {/*
+        ── WILDCARD routes — always last ──
+        These catch everything under /freelancer/ and /client/ that
+        wasn't matched by a specific route above.
+      */}
+      <Route path="/freelancer/*" element={<FreelancerDashboard />} />
+      <Route path="/client/*"     element={<ClientDashboard />} />
+
+      {/* 404 */}
+      <Route path="*" element={<NotFound />} />
+
+    </Routes>
+  </Suspense>
 );
 
 export default AppRoutes;
