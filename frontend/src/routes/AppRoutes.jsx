@@ -20,6 +20,7 @@ const FreelancerProfile   = lazy(() => import('../pages/freelancer/FreelancerPro
 import PlanCreationForms  from '../pages/freelancer/PlanCreationForms';
 // Day 6  — Praveen's subscription purchase flow
 import SubscriptionPurchase from '../pages/client/SubscriptionPurchase';
+import WalletPage from '../pages/wallet/WalletPage';
 
 // ── Route Guards ─────────────────────────────────────────────
 function PrivateRoute({ children, role }) {
@@ -102,6 +103,7 @@ const AppRoutes = () => (
       */}
       {/* Praveen Day 6 — subscription purchase flow */}
       <Route path="/client/:id/subscribe" element={<SubscriptionPurchase />} />
+      <Route path="/WalletPage" element={<WalletPage />} />
 
       {/*
         ── WILDCARD routes — always last ──
