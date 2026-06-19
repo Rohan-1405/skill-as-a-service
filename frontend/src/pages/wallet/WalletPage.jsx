@@ -18,6 +18,7 @@ import DashboardHeader from '../../components/common/DashboardHeader';
 import NotificationPanel, { SAMPLE_NOTIFS } from '../../components/common/NotificationPanel';
 import DepositModal from '../../components/wallet/DepositModal';
 import WithdrawalModal from '../../components/wallet/WithdrawalModal';
+import logo from '../../assets/logos/logo.png';
 
 // ── Icon set ────────────────────────────────────────────────
 const Icons = {
@@ -169,12 +170,11 @@ export default function WalletPage() {
         {/* Logo */}
         <div style={{ padding: '20px 20px 0' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 28 }}>
-            <div style={{
-              width: 36, height: 36, borderRadius: 10,
-              background: 'var(--gradient-brand)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 16, fontWeight: 800, color: '#fff',
-            }}>S</div>
+            <img
+              src={logo}
+              alt="SkillAsAService Logo"
+              style={{ width: 36, height: 36, borderRadius: 10, objectFit: 'contain' }}
+            />
             <div>
               <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-text)', lineHeight: 1.2 }}>SkillAsAService</div>
               <div style={{ fontSize: 10, color: 'var(--color-text-muted)' }}>Wallet</div>
@@ -187,12 +187,13 @@ export default function WalletPage() {
           <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--color-text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase', padding: '0 8px 8px' }}>Main Menu</div>
           {[
             { label: 'Dashboard',   icon: '🏠', active: false, path: '/client/dashboard' },
-            { label: 'Browse',      icon: '🔍', active: false },
-            { label: 'Subscriptions',icon: '📋',active: false },
-            { label: 'Projects',    icon: '📁', active: false },
-            { label: 'Wallet',      icon: '💰', active: true  },
-            { label: 'Messages',    icon: '💬', active: false },
-            { label: 'Settings',    icon: '⚙️', active: false },
+            { label: 'Browse',      icon: '🔍', active: false, path: null },
+            { label: 'Subscriptions',icon: '📋',active: false, path: null },
+            { label: 'Projects',    icon: '📁', active: false, path: null },
+            { label: 'Wallet',      icon: '💰', active: true,  path: '/client/wallet'    },
+            { label: 'Invoices',    icon: '🧾', active: false, path: '/client/invoices'  },
+            { label: 'Messages',    icon: '💬', active: false, path: null },
+            { label: 'Settings',    icon: '⚙️', active: false, path: null },
           ].map(item => (
             <button
               key={item.label}
