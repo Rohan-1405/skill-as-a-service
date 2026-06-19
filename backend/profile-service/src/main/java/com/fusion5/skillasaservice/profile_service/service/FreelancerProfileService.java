@@ -59,7 +59,7 @@ public class FreelancerProfileService {
         profile.setGithubUrl(request.getGithubUrl());
         profile.setProfileImage(request.getProfileImage());
 
-        FreelancerProfile saved = profileRepository.save(profile);
+        FreelancerProfile saved = profileRepository.saveAndFlush(profile);
         return toResponse(saved);
     }
 
@@ -88,7 +88,7 @@ public class FreelancerProfileService {
         if (request.getProfileImage() != null) profile.setProfileImage(request.getProfileImage());
         if (request.getAvailabilityStatus() != null) profile.setAvailabilityStatus(request.getAvailabilityStatus());
 
-        FreelancerProfile saved = profileRepository.save(profile);
+        FreelancerProfile saved = profileRepository.saveAndFlush(profile);
         return toResponse(saved);
     }
 
