@@ -828,12 +828,14 @@
    RESPONSIVE
    ════════════════════════════════════════ */
 
+/* Tablet landscape: 2-col grid */
 @media (max-width: 1024px) {
   .sp-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
+/* Tablet portrait */
 @media (max-width: 768px) {
   .sp-page-header {
     flex-direction: column;
@@ -844,20 +846,50 @@
     justify-content: center;
   }
 
+  /* 1-col grid on tablet portrait */
   .sp-grid {
     grid-template-columns: 1fr;
+    max-width: 480px;
+    margin: 0 auto;
   }
 
+  /* Slide-in editor: full width on tablet */
   .sp-editor {
     max-width: 100%;
   }
 }
 
+/* Mobile */
 @media (max-width: 480px) {
   .sp-page-title {
     font-size: var(--font-size-xl);
   }
 
+  /* Remove card centering constraint on small phones */
+  .sp-grid {
+    max-width: unset;
+  }
+
+  /* Card padding tighter */
+  .sp-card-header {
+    padding: var(--space-4) var(--space-4) var(--space-3);
+  }
+
+  .sp-card-features {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .sp-card-footer {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .sp-card-actions {
+    padding: var(--space-3) var(--space-4) var(--space-4);
+  }
+
+  .sp-card-amount { font-size: 24px; }
+
+  /* Editor panel: tighter horizontal padding on mobile */
   .sp-editor-header,
   .sp-editor-body,
   .sp-editor-footer {
@@ -865,6 +897,13 @@
     padding-right: var(--space-4);
   }
 
+  /* Popular badge doesn't overlap price on small cards */
+  .sp-card-popular-badge {
+    font-size: 9px;
+    padding: 2px 8px;
+  }
+
+  /* Toast: full width on mobile, no centering transform */
   .sp-toast {
     left: var(--space-4);
     right: var(--space-4);

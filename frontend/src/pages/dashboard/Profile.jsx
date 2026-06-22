@@ -213,7 +213,7 @@ const TagInput = ({ tags, onChange, placeholder }) => {
         </span>
       ))}
       <input type="text" value={input}
-        onChange={(e) => setInput(e.target.value)}
+        onChange={(e) => setInput(e.target.value.slice(0, 30))}
         onKeyDown={handleKey}
         onBlur={() => input && addTag(input)}
         placeholder={tags.length === 0 ? placeholder : ''}
@@ -888,8 +888,8 @@ const Profile = () => {
               <Field label="GitHub" error={errors.github}>
                 <div className="profile-input-wrap profile-social-wrap">
                   <span className="profile-social-icon"><GithubIcon /></span>
-                  <input type="url" placeholder="https://github.com/username" value={github}
-                    onChange={(e) => { setGithub(e.target.value); clearError('github'); }}
+                  <input type="url" placeholder="https://github.com/username" value={github} maxLength={100}
+                    onChange={(e) => { setGithub(e.target.value.slice(0, 100)); clearError('github'); }}
                     className={`profile-input${errors.github ? ' error' : ''}`} />
                 </div>
               </Field>
@@ -900,8 +900,8 @@ const Profile = () => {
                       <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                     </svg>
                   </span>
-                  <input type="url" placeholder="https://linkedin.com/in/username" value={linkedin}
-                    onChange={(e) => { setLinkedin(e.target.value); clearError('linkedin'); }}
+                  <input type="url" placeholder="https://linkedin.com/in/username" value={linkedin} maxLength={100}
+                    onChange={(e) => { setLinkedin(e.target.value.slice(0, 100)); clearError('linkedin'); }}
                     className={`profile-input${errors.linkedin ? ' error' : ''}`} />
                 </div>
               </Field>
@@ -913,8 +913,8 @@ const Profile = () => {
                       <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
                     </svg>
                   </span>
-                  <input type="url" placeholder="https://yourportfolio.com" value={portfolio}
-                    onChange={(e) => { setPortfolio(e.target.value); clearError('portfolio'); }}
+                  <input type="url" placeholder="https://yourportfolio.com" value={portfolio} maxLength={100}
+                    onChange={(e) => { setPortfolio(e.target.value.slice(0, 100)); clearError('portfolio'); }}
                     className={`profile-input${errors.portfolio ? ' error' : ''}`} />
                 </div>
               </Field>
@@ -928,13 +928,13 @@ const Profile = () => {
           <AppCard title="Basic Information" subtitle="Your name and headline as clients will see them" accentColor="cyan">
             <div className="profile-fields">
               <Field label="Display Name *" error={errors.displayName}>
-                <input type="text" placeholder="e.g. Lohith Kumar" value={displayName} maxLength={61}
-                  onChange={(e) => { setDisplayName(e.target.value); clearError('displayName'); }}
+                <input type="text" placeholder="e.g. Lohith Kumar" value={displayName} maxLength={60}
+                  onChange={(e) => { setDisplayName(e.target.value.slice(0, 60)); clearError('displayName'); }}
                   className={`profile-input${errors.displayName ? ' error' : ''}`} />
               </Field>
               <Field label="Tagline" hint="One line that describes what you do best." error={errors.tagline}>
-                <input type="text" placeholder="e.g. React Developer · UI/UX Enthusiast" value={tagline} maxLength={101}
-                  onChange={(e) => { setTagline(e.target.value); clearError('tagline'); }}
+                <input type="text" placeholder="e.g. React Developer · UI/UX Enthusiast" value={tagline} maxLength={100}
+                  onChange={(e) => { setTagline(e.target.value.slice(0, 100)); clearError('tagline'); }}
                   className={`profile-input${errors.tagline ? ' error' : ''}`} />
                 <span className={`profile-char-count${tagline.length > 90 ? ' profile-char-count--warn' : ''}`}>
                   {tagline.length}/100
@@ -942,7 +942,7 @@ const Profile = () => {
               </Field>
               <Field label="Location">
                 <input type="text" placeholder="e.g. Hyderabad, India" value={location}
-                  onChange={(e) => setLocation(e.target.value)} className="profile-input" />
+                  onChange={(e) => setLocation(e.target.value.slice(0, 60))} className="profile-input" maxLength={60} />
               </Field>
             </div>
           </AppCard>

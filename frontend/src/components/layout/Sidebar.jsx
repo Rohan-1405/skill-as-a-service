@@ -17,7 +17,7 @@ import logo from '../../assets/logos/logo.png';
  *   sidebarOpen — boolean, controlled by DashboardLayout toggle button
  *   onClose     — callback to close sidebar (mobile overlay tap)
  */
-const Sidebar = ({ navItems = [], portalName = 'Dashboard', sidebarOpen = true, onClose }) => {
+const Sidebar = ({ navItems = [], portalName = 'Dashboard', sidebarOpen = true, onClose, onNavClick }) => {
   const { logout } = useAuthContext();
   const navigate = useNavigate();
 
@@ -49,7 +49,7 @@ const Sidebar = ({ navItems = [], portalName = 'Dashboard', sidebarOpen = true, 
               <NavLink
                 to={item.path}
                 className={({ isActive }) => `sidebar-item${isActive ? ' active' : ''}`}
-                onClick={onClose}
+                onClick={onNavClick}
               >
                 <span className="sidebar-item-icon" aria-hidden="true">{item.icon}</span>
                 <span>{item.label}</span>

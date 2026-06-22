@@ -171,7 +171,7 @@
 .sidebar-section-label {
   font-size: 10.5px;
   font-weight: var(--font-weight-semibold);
-  color: var(--sidebar-text-header);  /* #556080 */
+  color: #8892B0;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   padding: var(--space-4) var(--space-5) var(--space-2);
@@ -187,7 +187,7 @@
   padding: 9px var(--space-5);
   margin: 1px var(--space-3);
   border-radius: var(--radius-sm);       /* 8px */
-  color: var(--sidebar-text);            /* #8892B0 */
+  color: #B0BAD4;
   text-decoration: none;
   font-size: 13.5px;
   font-weight: var(--font-weight-medium);
@@ -290,10 +290,13 @@
 .dashboard-main {
   flex: 1;
   min-width: 0;
+  width: 0;
   min-height: 100vh;
   background: var(--color-bg);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  transition: width var(--transition-base);
 }
 
 /* ── Top Bar (inside main area) ── */
@@ -362,8 +365,9 @@
 .dashboard-content {
   flex: 1;
   padding: var(--space-8);
-  max-width: var(--content-max-width);
   width: 100%;
+  /* No max-width — content fills all available space.
+     When sidebar closes, main stretches to fill the freed 260px. */
 }
 
 /* ── Page Header (title + subtitle inside content) ── */
@@ -570,7 +574,7 @@
 }
 
 @media (min-width: 481px) and (max-width: 768px) {
-  /* Tablet: sidebar overlays but open by default — same overlay logic */
+  /* Tablet: sidebar overlays, hamburger toggle */
   .sidebar {
     position: fixed;
     left: 0;
@@ -600,18 +604,10 @@
     width: 100%;
     margin-left: 0 !important;
   }
-
-  /* Chevron on tablet */
-  .toggle-icon-hamburger { display: none;  }
-  .toggle-icon-chevron   { display: block; }
 }
 
 @media (min-width: 769px) {
-  /* Desktop: hamburger hidden, chevron shown */
-  .toggle-icon-hamburger { display: none;  }
-  .toggle-icon-chevron   { display: block; }
-
-  /* Sidebar inline (not overlay) */
+  /* Desktop: sidebar inline (not overlay), hamburger shown */
   .sidebar-overlay { display: none !important; }
 }
 
@@ -680,10 +676,10 @@
 }
 
 .dashboard-shell.sidebar-hidden .sidebar {
-  transform: translateX(-260px);
   width: 0;
   min-width: 0;
   overflow: hidden;
+  padding: 0;
 }
 
 /* Sidebar open on desktop — default state */
@@ -906,20 +902,11 @@
   color: var(--color-danger);
 }
 
-/* ── Toggle button: hamburger on mobile, chevron on tablet/PC ── */
+/* ── Toggle button: hamburger on ALL devices, chevron hidden everywhere ── */
 .toggle-icon-hamburger {
-  display: none;
-}
-
-.toggle-icon-chevron {
   display: block;
 }
 
-@media (max-width: 480px) {
-  .toggle-icon-hamburger {
-    display: block;
-  }
-  .toggle-icon-chevron {
-    display: none;
-  }
+.toggle-icon-chevron {
+  display: none !important;
 }

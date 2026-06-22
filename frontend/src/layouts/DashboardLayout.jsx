@@ -28,6 +28,9 @@ const DashboardLayout = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // isMobile: sidebar should auto-close after nav click only on mobile (≤768px)
+  const isMobile = () => window.innerWidth <= 768;
+
   const firstName = user?.name?.split(' ')[0] || user?.email?.split('@')[0] || null;
   const resolvedTitle = pageTitle || (firstName ? `${firstName}'s Dashboard` : 'Dashboard');
 
@@ -47,6 +50,7 @@ const DashboardLayout = ({
         portalName={portalName}
         sidebarOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
+        onNavClick={() => { if (isMobile()) setSidebarOpen(false); }}
       />
 
       {/* Main */}
@@ -56,15 +60,13 @@ const DashboardLayout = ({
         <header className="dashboard-topbar" role="banner">
           <div className="dashboard-topbar-left">
 
-            {/* Toggle button */}
+            {/* Toggle button — hamburger on ALL devices */}
             <button
               className="topbar-sidebar-toggle"
               onClick={() => setSidebarOpen((v) => !v)}
               aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
             >
-              {/* MOBILE: hamburger (3 lines) */}
               <svg
-                className="toggle-icon-hamburger"
                 width="20" height="20"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -77,25 +79,6 @@ const DashboardLayout = ({
                 <line x1="3" y1="6"  x2="21" y2="6"  />
                 <line x1="3" y1="12" x2="21" y2="12" />
                 <line x1="3" y1="18" x2="21" y2="18" />
-              </svg>
-
-              {/* TABLET + PC: chevron arrow */}
-              <svg
-                className="toggle-icon-chevron"
-                width="16" height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{
-                  transform: sidebarOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                  transition: 'transform 0.25s ease',
-                }}
-                aria-hidden="true"
-              >
-                <polyline points="15 18 9 12 15 6" />
               </svg>
             </button>
 

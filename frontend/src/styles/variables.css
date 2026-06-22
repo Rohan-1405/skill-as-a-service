@@ -73,9 +73,9 @@
      TEXT
      ===================== */
   --color-text:              #FFFFFF;
-  --color-text-secondary:    #8892B0;
-  --color-text-muted:        #556080;
-  --color-text-disabled:     #3D4A6B;
+  --color-text-secondary:    #B0BAD4;
+  --color-text-muted:        #8892B0;
+  --color-text-disabled:     #556080;
 
   /* =====================
      BORDERS
@@ -90,9 +90,9 @@
   --sidebar-bg:              #191C25;
   --sidebar-bg-hover:        #242836;
   --sidebar-bg-active:       #035AE1;
-  --sidebar-text:            #8892B0;
+  --sidebar-text:            #B0BAD4;
   --sidebar-text-active:     #FFFFFF;
-  --sidebar-text-header:     #556080;
+  --sidebar-text-header:     #8892B0;
   --sidebar-border:          rgba(255, 255, 255, 0.08);
 
   /* =====================

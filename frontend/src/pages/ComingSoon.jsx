@@ -1,24 +1,27 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../layouts/DashboardLayout';
-import { FREELANCER_NAV } from '../constants/navItems';
+import { FREELANCER_NAV, CLIENT_NAV } from '../constants/navItems';
 
 /**
  * ComingSoon — placeholder page for sidebar links not yet built.
- * Uses the full DashboardLayout so the sidebar stays visible.
- * Shows which day this feature is scheduled to be built.
  *
  * Props:
- *   title — e.g. "Wallet Dashboard"
- *   day   — build day number, e.g. 7
+ *   title   — e.g. "Wallet Dashboard"
+ *   day     — build day number, e.g. 7
+ *   portal  — "freelancer" (default) | "client"
  */
-const ComingSoon = ({ title = 'This Page', day = null }) => {
-  const navigate = useNavigate();
+const ComingSoon = ({ title = 'This Page', day = null, portal = 'freelancer' }) => {
+  const navigate   = useNavigate();
+  const isClient   = portal === 'client';
+  const navItems   = isClient ? CLIENT_NAV   : FREELANCER_NAV;
+  const portalName = isClient ? 'Client Portal' : 'Freelancer Portal';
+  const homeRoute  = isClient ? '/client/dashboard' : '/dashboard';
 
   return (
     <DashboardLayout
-      navItems={FREELANCER_NAV}
-      portalName="Freelancer Portal"
+      navItems={navItems}
+      portalName={portalName}
       pageSubtitle={title}
     >
       <div style={{
@@ -39,7 +42,9 @@ const ComingSoon = ({ title = 'This Page', day = null }) => {
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           color: 'var(--brand-blue)',
         }}>
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="1.5"
+            strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="10" />
             <polyline points="12 6 12 12 16 14" />
           </svg>
@@ -69,7 +74,7 @@ const ComingSoon = ({ title = 'This Page', day = null }) => {
 
         {/* Back button */}
         <button
-          onClick={() => navigate('/dashboard')}
+          onClick={() => navigate(homeRoute)}
           style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -85,9 +90,11 @@ const ComingSoon = ({ title = 'This Page', day = null }) => {
             transition: 'opacity var(--transition-fast)',
           }}
           onMouseEnter={(e) => e.currentTarget.style.opacity = '0.85'}
-          onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+          onMouseLeave={(e) => e.currentTarget.style.opacity  = '1'}
         >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2.5"
+            strokeLinecap="round" strokeLinejoin="round">
             <polyline points="15 18 9 12 15 6" />
           </svg>
           Back to Dashboard
