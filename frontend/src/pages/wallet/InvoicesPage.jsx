@@ -233,8 +233,8 @@ function InvoiceDetailModal({ invoice, onClose, onPrint }) {
               <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>From</div>
               <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-text)' }}>SkillAsAService</div>
               <div style={{ fontSize: 12, color: 'var(--color-text-muted)', marginTop: 2 }}>Fusion5 Technologies Pvt Ltd</div>
-              <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>Vijayawada, Andhra Pradesh, India</div>
-              <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>GST: 37AABCF1234A1Z5</div>
+              <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>Hyderabad, Telangana, Nanakramguda, India</div>
+              <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>GST: 36AABCF1234A1Z5</div>
             </div>
             <div>
               <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Billed To</div>
@@ -436,12 +436,8 @@ export default function InvoicesPage() {
               <img
                 src={logo}
                 alt="SkillAsAService Logo"
-                style={{ width: 36, height: 36, borderRadius: 10, objectFit: 'contain' }}
+                style={{ width: 150, height: 56, borderRadius: 10, objectFit: 'contain' }}
               />
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-text)', lineHeight: 1.2 }}>SkillAsAService</div>
-                <div style={{ fontSize: 10, color: 'var(--color-text-muted)' }}>Client Portal</div>
-              </div>
             </div>
             <button onClick={() => setSidebarOpen(false)} style={{ background: 'transparent', border: '1px solid var(--color-border)', borderRadius: 6, color: 'var(--color-text-muted)', padding: '4px 6px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
               <Icons.Close />

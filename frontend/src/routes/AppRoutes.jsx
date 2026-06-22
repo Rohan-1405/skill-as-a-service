@@ -18,6 +18,10 @@ const SubscriptionPurchase = lazy(() => import('../pages/client/SubscriptionPurc
 const WalletPage           = lazy(() => import('../pages/wallet/WalletPage'));
 const InvoicesPage         = lazy(() => import('../pages/wallet/InvoicesPage'));
 
+// ── Day 9 & Day 10 — Praveen Gorla ───────────────────────────
+const TaskManagement = lazy(() => import('../pages/freelancer/TaskManagement'));
+const GroupChat      = lazy(() => import('../pages/freelancer/GroupChat'));
+
 // ── Route Guards ──────────────────────────────────────────────
 function PrivateRoute({ children, role }) {
   const { isAuthenticated } = useAuthContext();
@@ -63,6 +67,8 @@ function NotFound() {
 //   • All specific paths declared BEFORE their wildcard siblings
 //   • Client sub-pages (/wallet, /invoices) are explicit routes
 //   • Old PascalCase paths redirect to correct kebab-case URLs
+//   • Day 9  → /freelancer/tasks      (TaskManagement — Praveen)
+//   • Day 10 → /freelancer/group-chat (GroupChat      — Praveen)
 // ─────────────────────────────────────────────────────────────
 const AppRoutes = () => (
   <Suspense fallback={<div style={{ minHeight: '100vh', background: 'var(--color-bg)' }} />}>
@@ -84,6 +90,13 @@ const AppRoutes = () => (
       <Route path="/freelancer/dashboard"     element={<FreelancerDashboard />} />
       <Route path="/freelancer/profile"       element={<FreelancerProfile />} />
       <Route path="/freelancer/plan-creation" element={<PlanCreationForms />} />
+
+      {/* Day 9  — Praveen Gorla: Task Management UI */}
+      <Route path="/freelancer/tasks"         element={<TaskManagement />} />
+
+      {/* Day 10 — Praveen Gorla: Group Chat UI */}
+      <Route path="/freelancer/group-chat"    element={<GroupChat />} />
+
       <Route path="/FreelancerDashboard"      element={<FreelancerDashboard />} />
       <Route path="/FreelancerProfile"        element={<FreelancerProfile />} />
       <Route path="/freelancer/*"             element={<FreelancerDashboard />} />
@@ -92,11 +105,17 @@ const AppRoutes = () => (
       <Route path="/client/dashboard"         element={<ClientDashboard />} />
       <Route path="/client/wallet"            element={<WalletPage />} />
       <Route path="/client/invoices"          element={<InvoicesPage />} />
+      <Route path="/client/subscriptions"     element={<ClientDashboard />} />
       <Route path="/client/:id/subscribe"     element={<SubscriptionPurchase />} />
       <Route path="/ClientDashboard"          element={<ClientDashboard />} />
+
+      {/* Stale/legacy PascalCase URLs — redirect BEFORE the wildcard */}
+      <Route path="/client/WalletPage"   element={<Navigate to="/client/wallet"   replace />} />
+      <Route path="/client/InvoicesPage" element={<Navigate to="/client/invoices" replace />} />
+
       <Route path="/client/*"                 element={<ClientDashboard />} />
 
-      {/* Legacy PascalCase redirects */}
+      {/* Legacy PascalCase redirects (root-level) */}
       <Route path="/WalletPage"   element={<Navigate to="/client/wallet"   replace />} />
       <Route path="/InvoicesPage" element={<Navigate to="/client/invoices" replace />} />
 

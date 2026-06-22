@@ -84,6 +84,9 @@ export default function WalletPage() {
   const { logout } = useAuthContext();
   const navigate   = useNavigate();
 
+  // Sidebar state (mobile toggle)
+  const [sidebarOpen, setSidebarOpen]     = useState(false);
+
   // Header state
   const [notifOpen, setNotifOpen]         = useState(false);
   const [notifications, setNotifications] = useState(SAMPLE_NOTIFS);
@@ -158,27 +161,61 @@ export default function WalletPage() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--color-bg)', fontFamily: 'var(--font-family)' }}>
 
+      {/* ── MOBILE SIDEBAR OVERLAY ──────────────────────────── */}
+      {sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          style={{
+            position: 'fixed', inset: 0,
+            background: 'rgba(0,0,0,0.55)',
+            zIndex: 199,
+            backdropFilter: 'blur(2px)',
+          }}
+        />
+      )}
+
       {/* ── SIDEBAR ─────────────────────────────────────────── */}
-      <aside style={{
-        width: 240, flexShrink: 0,
-        background: 'var(--color-bg-secondary)',
-        borderRight: '1px solid var(--color-border)',
-        display: 'flex', flexDirection: 'column',
-        position: 'sticky', top: 0, height: '100vh',
-        overflowY: 'auto',
-      }}>
+      {/* Sidebar desktop always visible; on mobile slides in/out */}
+      <style>{`
+        .wallet-sidebar {
+          position: sticky !important;
+          top: 0;
+          transform: none !important;
+          z-index: auto !important;
+          transition: none !important;
+        }
+        @media (max-width: 768px) {
+          .wallet-sidebar {
+            position: fixed !important;
+            top: 0; left: 0;
+            height: 100vh;
+            z-index: 200 !important;
+            transform: translateX(-100%) !important;
+            transition: transform 0.25s ease !important;
+          }
+          .wallet-sidebar.open {
+            transform: translateX(0) !important;
+          }
+        }
+      `}</style>
+      <aside
+        className={`wallet-sidebar${sidebarOpen ? ' open' : ''}`}
+        style={{
+          width: 240, flexShrink: 0,
+          background: 'var(--color-bg-secondary)',
+          borderRight: '1px solid var(--color-border)',
+          display: 'flex', flexDirection: 'column',
+          overflowY: 'auto',
+          height: '100vh',
+        }}>
         {/* Logo */}
         <div style={{ padding: '20px 20px 0' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 28 }}>
             <img
               src={logo}
               alt="SkillAsAService Logo"
-              style={{ width: 36, height: 36, borderRadius: 10, objectFit: 'contain' }}
+              style={{ width: 150, height: 56, borderRadius: 10, objectFit: 'contain' }}
             />
-            <div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-text)', lineHeight: 1.2 }}>SkillAsAService</div>
-              <div style={{ fontSize: 10, color: 'var(--color-text-muted)' }}>Wallet</div>
-            </div>
           </div>
         </div>
 
@@ -245,7 +282,8 @@ export default function WalletPage() {
           pageTitle="Wallet"
           pageSubtitle="Manage your funds"
           notifCount={unreadCount}
-          onNotifClick={() => setNotifOpen(true)}
+          onMenuToggle={() => setSidebarOpen(v => !v)}
+          onNotifClick={() => setNotifOpen(v => !v)}
           userRole="client"
           userName="Client User"
           onSignOut={handleSignOut}
