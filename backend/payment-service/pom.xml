@@ -12,10 +12,10 @@
     </parent>
 
     <groupId>com.fusion5.skillasaservice</groupId>
-    <artifactId>subscription-service</artifactId>
+    <artifactId>payment-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>subscription-service</name>
-    <description>SkillAsAService - Subscription Plans and Features Service</description>
+    <name>payment-service</name>
+    <description>SkillAsAService - Razorpay Payment and Invoice Service</description>
 
     <properties>
         <java.version>21</java.version>
@@ -39,19 +39,20 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-        </dependency>
-        <!-- RabbitMQ - listens for payment.completed to activate subscriptions -->
+        <!-- RabbitMQ - publishes payment.completed events -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
-        <!-- OpenFeign - calls payment-service REST to create Razorpay order synchronously -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+        <!-- Razorpay Java SDK -->
+        <dependency>
+            <groupId>com.razorpay</groupId>
+            <artifactId>razorpay-java</artifactId>
+            <version>1.4.3</version>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
