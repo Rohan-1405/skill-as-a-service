@@ -18,6 +18,9 @@ import PaymentFailed     from '../pages/client/payment/PaymentFailed';
 import Projects          from '../pages/dashboard/Projects';
 import ProjectDetail     from '../pages/dashboard/ProjectDetail';
 import ChatPage          from '../pages/dashboard/ChatPage';
+import KYCVerification  from '../pages/dashboard/KYCVerification';
+import Analytics        from '../pages/dashboard/Analytics';
+import Settings         from '../pages/dashboard/Settings';
 import ComingSoon        from '../pages/ComingSoon';
 
 const AppRoutes = () => {
@@ -47,9 +50,10 @@ const AppRoutes = () => {
       <Route path="/wallet"              element={<WalletDashboard />} />
       <Route path="/wallet/deposit"      element={<DepositFunds />} />
       <Route path="/withdrawals"         element={<WithdrawalRequest />} />
-      <Route path="/analytics"     element={<ComingSoon title="Analytics"      day={8}  />} />
+      <Route path="/analytics"     element={<Analytics />} />
       <Route path="/notifications" element={<ComingSoon title="Notifications"  day={11} />} />
-      <Route path="/settings"      element={<ComingSoon title="Settings"       day={11} />} />
+      <Route path="/kyc"           element={<KYCVerification />} />
+      <Route path="/settings"      element={<Settings />} />
 
       {/* ══════════════════════════════════
           CLIENT PORTAL

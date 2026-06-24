@@ -203,6 +203,11 @@ export const FREELANCER_NAV = [
     section: 'Account',
   },
   {
+    label: 'KYC Verification',
+    path: '/kyc',
+    icon: Icons.kyc,
+  },
+  {
     label: 'Settings',
     path: '/settings',
     icon: Icons.settings,

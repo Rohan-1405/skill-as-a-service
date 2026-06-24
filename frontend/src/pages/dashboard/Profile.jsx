@@ -22,6 +22,44 @@ const DEMO = {
   github:       'https://github.com/lohithsairam',
   linkedin:     'https://linkedin.com/in/lohithsairam',
   portfolio:    'https://lohithsairam.dev',
+  experiences: [
+    {
+      id: 'exp1',
+      company: 'Fusion5 Technologies Pvt Ltd',
+      role: 'Frontend Developer',
+      startMonth: '06', startYear: '2026',
+      endMonth: '', endYear: '',
+      current: true,
+      description: 'Building SkillAsAService — a subscription-based freelancer marketplace with React 18, custom CSS design system, and Spring Boot microservices.',
+    },
+    {
+      id: 'exp2',
+      company: 'Freelance',
+      role: 'Full-Stack Developer',
+      startMonth: '01', startYear: '2025',
+      endMonth: '05', endYear: '2026',
+      current: false,
+      description: 'Delivered 5+ client projects including e-commerce platforms, SaaS dashboards, and REST APIs. Worked with React, Node.js, Firebase, and AWS.',
+    },
+  ],
+  certifications: [
+    {
+      id: 'cert1',
+      name: 'React — The Complete Guide',
+      issuer: 'Udemy',
+      issueMonth: '03', issueYear: '2025',
+      credentialId: 'UC-REACT-2025',
+      credentialUrl: 'https://udemy.com/certificate/UC-REACT-2025',
+    },
+    {
+      id: 'cert2',
+      name: 'AWS Certified Cloud Practitioner',
+      issuer: 'Amazon Web Services',
+      issueMonth: '11', issueYear: '2024',
+      credentialId: 'AWS-CCP-001',
+      credentialUrl: '',
+    },
+  ],
   projects: [
     {
       title:       'SkillAsAService — Freelancer Marketplace',
@@ -32,31 +70,14 @@ const DEMO = {
     },
     {
       title:       'LuxeStore — React E-commerce',
-      description: 'Full-featured e-commerce platform with cart, wishlist, and checkout flows. Built with React Router v6 and Context API. Reverse-engineered from a premium Framer template with View Transitions API.',
+      description: 'Full-featured e-commerce platform with cart, wishlist, and checkout flows. Built with React Router v6 and Context API.',
       githubUrl:   'https://github.com/lohithsairam/luxestore',
       liveUrl:     'https://luxestore.vercel.app',
-      thumbFile: null, thumbPreview: '',
-    },
-    {
-      title:       'Real-time Chat App',
-      description: 'WhatsApp-style chat app using React, Firebase Firestore and Socket.IO. Private messaging, user presence, and uid-based message deduplication. Built with Vite + Tailwind.',
-      githubUrl:   'https://github.com/lohithsairam/chat-app',
-      liveUrl:     '',
-      thumbFile: null, thumbPreview: '',
-    },
-    {
-      title:       'CodeAxis — Spring Boot Backend',
-      description: 'Production-grade Spring Boot SaaS backend with JWT auth, UUID/BINARY(16) storage, WebSocket notifications, and layered architecture. 49+ files, full DB migration scripts included.',
-      githubUrl:   'https://github.com/lohithsairam/codeaxis-backend',
-      liveUrl:     '',
       thumbFile: null, thumbPreview: '',
     },
   ],
 };
 
-/* ─────────────────────────────────────────
-   DEMO SUBSCRIPTION PLANS (stub until Day 5)
-───────────────────────────────────────── */
 const DEMO_PLANS = [
   {
     id: 'basic',
@@ -99,23 +120,29 @@ const AVATAR_ACCEPT        = ['image/jpeg', 'image/png'];
 const THUMB_MAX_MB         = 5;
 const EXPERIENCE_LEVELS    = ['Entry Level', 'Junior', 'Mid-Level', 'Senior', 'Expert'];
 const AVAILABILITY_OPTS    = ['Full-time', 'Part-time', 'Weekends only', 'Not available'];
-const LANGUAGE_SUGGESTIONS = ['English', 'Hindi', 'Telugu', 'Tamil', 'Kannada', 'Malayalam', 'Bengali', 'Marathi'];
-const URL_REGEX            = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z]{2,}/;
+const MONTHS = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const URL_REGEX = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z]{2,}/;
+
+const currentYear = new Date().getFullYear();
+const YEARS = Array.from({ length: 30 }, (_, i) => String(currentYear - i));
 
 /* ─────────────────────────────────────────
    COMPLETENESS
 ───────────────────────────────────────── */
 const COMPLETENESS_ITEMS = [
-  { key: 'avatar',      label: 'Profile photo',      check: (s) => !!s.avatarPreview },
-  { key: 'name',        label: 'Display name',        check: (s) => s.displayName.trim().length > 0 },
-  { key: 'tagline',     label: 'Tagline',             check: (s) => s.tagline.trim().length > 0 },
-  { key: 'location',    label: 'Location',            check: (s) => s.location.trim().length > 0 },
-  { key: 'bio',         label: 'Bio (50+ chars)',      check: (s) => s.bio.trim().length >= 50 },
-  { key: 'skills',      label: 'At least 1 skill',    check: (s) => s.skills.length > 0 },
-  { key: 'experience',  label: 'Experience level',    check: (s) => s.experience !== '' },
-  { key: 'project',     label: 'At least 1 project',  check: (s) => s.projects.length > 0 },
-  { key: 'social',      label: 'A social link',        check: (s) => !!(s.github || s.linkedin || s.portfolio) },
-  { key: 'plan',        label: 'Subscription plan',   check: (s) => s.plans.length > 0 },
+  { key: 'avatar',      label: 'Profile photo',         check: (s) => !!s.avatarPreview },
+  { key: 'name',        label: 'Display name',           check: (s) => s.displayName.trim().length > 0 },
+  { key: 'tagline',     label: 'Tagline',                check: (s) => s.tagline.trim().length > 0 },
+  { key: 'location',    label: 'Location',               check: (s) => s.location.trim().length > 0 },
+  { key: 'bio',         label: 'Bio (50+ chars)',         check: (s) => s.bio.trim().length >= 50 },
+  { key: 'skills',      label: 'At least 1 skill',       check: (s) => s.skills.length > 0 },
+  { key: 'experience',  label: 'Experience level',       check: (s) => s.experience !== '' },
+  { key: 'workexp',     label: 'Work experience entry',  check: (s) => s.experiences.length > 0 },
+  { key: 'cert',        label: 'At least 1 certification', check: (s) => s.certifications.length > 0 },
+  { key: 'project',     label: 'At least 1 project',    check: (s) => s.projects.length > 0 },
+  { key: 'social',      label: 'A social link',          check: (s) => !!(s.github || s.linkedin || s.portfolio) },
+  { key: 'plan',        label: 'Subscription plan',      check: (s) => s.plans.length > 0 },
 ];
 
 const getCompleteness = (state) => {
@@ -137,10 +164,11 @@ const strengthLabel = (pct) => {
 /* ─────────────────────────────────────────
    ICONS
 ───────────────────────────────────────── */
-const Ico = ({ d, size = 18, fill = 'none' }) => (
+const Ico = ({ d, size = 18, fill = 'none', children }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill={fill}
     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d={d} />
+    {d && <path d={d} />}
+    {children}
   </svg>
 );
 const UploadIcon   = () => <Ico size={26} d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />;
@@ -148,7 +176,6 @@ const TrashIcon    = () => <Ico size={15} d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2
 const PlusIcon     = () => <Ico size={14} d="M12 5v14M5 12h14" />;
 const CheckIcon    = () => <Ico size={14} d="M20 6L9 17l-5-5" />;
 const EditIcon     = () => <Ico size={15} d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />;
-const LinkIcon     = () => <Ico size={14} d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />;
 const ExternalIcon = () => <Ico size={13} d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3" />;
 const ArrowIcon    = () => <Ico size={14} d="M5 12h14M12 5l7 7-7 7" />;
 const AlertIcon    = () => (
@@ -315,6 +342,140 @@ const CompletenessBar = ({ state }) => {
 };
 
 /* ─────────────────────────────────────────
+   EXPERIENCE EDITOR (single entry)
+───────────────────────────────────────── */
+const ExperienceEditor = ({ entry, index, onChange, onRemove }) => {
+  const update = (key, val) => onChange(index, { ...entry, [key]: val });
+  return (
+    <div className="exp-editor-card">
+      <div className="exp-editor-header">
+        <span className="exp-editor-num">Experience {index + 1}</span>
+        <button type="button" className="project-editor-remove" onClick={() => onRemove(index)}>
+          <TrashIcon /> Remove
+        </button>
+      </div>
+      <div className="exp-editor-body">
+        <div className="exp-editor-row">
+          <Field label="Company / Organisation *">
+            <input type="text" placeholder="e.g. Fusion5 Technologies"
+              value={entry.company} maxLength={100}
+              onChange={(e) => update('company', e.target.value.slice(0, 100))}
+              className="profile-input" />
+          </Field>
+          <Field label="Role / Title *">
+            <input type="text" placeholder="e.g. Frontend Developer"
+              value={entry.role} maxLength={100}
+              onChange={(e) => update('role', e.target.value.slice(0, 100))}
+              className="profile-input" />
+          </Field>
+        </div>
+        <div className="exp-editor-row">
+          <Field label="Start Date">
+            <div style={{ display: 'flex', gap: 8 }}>
+              <select value={entry.startMonth} onChange={(e) => update('startMonth', e.target.value)} className="profile-select" style={{ flex: 1 }}>
+                <option value="">Month</option>
+                {MONTHS.map((m, i) => <option key={m} value={m}>{MONTH_NAMES[i]}</option>)}
+              </select>
+              <select value={entry.startYear} onChange={(e) => update('startYear', e.target.value)} className="profile-select" style={{ flex: 1 }}>
+                <option value="">Year</option>
+                {YEARS.map((y) => <option key={y}>{y}</option>)}
+              </select>
+            </div>
+          </Field>
+          <Field label="End Date">
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              <select value={entry.endMonth} onChange={(e) => update('endMonth', e.target.value)} className="profile-select" style={{ flex: 1 }} disabled={entry.current}>
+                <option value="">Month</option>
+                {MONTHS.map((m, i) => <option key={m} value={m}>{MONTH_NAMES[i]}</option>)}
+              </select>
+              <select value={entry.endYear} onChange={(e) => update('endYear', e.target.value)} className="profile-select" style={{ flex: 1 }} disabled={entry.current}>
+                <option value="">Year</option>
+                {YEARS.map((y) => <option key={y}>{y}</option>)}
+              </select>
+            </div>
+            <label className="exp-current-label">
+              <input type="checkbox" checked={entry.current}
+                onChange={(e) => { update('current', e.target.checked); if (e.target.checked) { update('endMonth', ''); update('endYear', ''); } }}
+                style={{ marginRight: 6 }} />
+              Currently working here
+            </label>
+          </Field>
+        </div>
+        <Field label="Description">
+          <textarea rows={3} placeholder="What did you do? Key achievements, technologies used."
+            value={entry.description} maxLength={400}
+            onChange={(e) => update('description', e.target.value.slice(0, 400))}
+            className="profile-textarea" />
+          <span className="profile-char-count">{400 - entry.description.length} remaining</span>
+        </Field>
+      </div>
+    </div>
+  );
+};
+
+/* ─────────────────────────────────────────
+   CERTIFICATION EDITOR (single entry)
+───────────────────────────────────────── */
+const CertEditor = ({ cert, index, onChange, onRemove }) => {
+  const update = (key, val) => onChange(index, { ...cert, [key]: val });
+  return (
+    <div className="exp-editor-card">
+      <div className="exp-editor-header">
+        <span className="exp-editor-num">Certification {index + 1}</span>
+        <button type="button" className="project-editor-remove" onClick={() => onRemove(index)}>
+          <TrashIcon /> Remove
+        </button>
+      </div>
+      <div className="exp-editor-body">
+        <div className="exp-editor-row">
+          <Field label="Certification Name *">
+            <input type="text" placeholder="e.g. AWS Certified Cloud Practitioner"
+              value={cert.name} maxLength={120}
+              onChange={(e) => update('name', e.target.value.slice(0, 120))}
+              className="profile-input" />
+          </Field>
+          <Field label="Issuing Organisation *">
+            <input type="text" placeholder="e.g. Amazon Web Services"
+              value={cert.issuer} maxLength={100}
+              onChange={(e) => update('issuer', e.target.value.slice(0, 100))}
+              className="profile-input" />
+          </Field>
+        </div>
+        <div className="exp-editor-row">
+          <Field label="Issue Date">
+            <div style={{ display: 'flex', gap: 8 }}>
+              <select value={cert.issueMonth} onChange={(e) => update('issueMonth', e.target.value)} className="profile-select" style={{ flex: 1 }}>
+                <option value="">Month</option>
+                {MONTHS.map((m, i) => <option key={m} value={m}>{MONTH_NAMES[i]}</option>)}
+              </select>
+              <select value={cert.issueYear} onChange={(e) => update('issueYear', e.target.value)} className="profile-select" style={{ flex: 1 }}>
+                <option value="">Year</option>
+                {YEARS.map((y) => <option key={y}>{y}</option>)}
+              </select>
+            </div>
+          </Field>
+          <Field label="Credential ID">
+            <input type="text" placeholder="e.g. UC-REACT-2025"
+              value={cert.credentialId} maxLength={80}
+              onChange={(e) => update('credentialId', e.target.value.slice(0, 80))}
+              className="profile-input" />
+          </Field>
+        </div>
+        <Field label="Credential URL">
+          <div className="profile-input-wrap profile-social-wrap">
+            <span className="profile-social-icon"><ExternalIcon /></span>
+            <input type="url" placeholder="https://udemy.com/certificate/..."
+              value={cert.credentialUrl} maxLength={200}
+              onChange={(e) => update('credentialUrl', e.target.value.slice(0, 200))}
+              className="profile-input" />
+          </div>
+        </Field>
+      </div>
+    </div>
+  );
+};
+
+/* ─────────────────────────────────────────
    PROJECT EDITOR (edit mode)
 ───────────────────────────────────────── */
 const ProjectEditor = ({ project, index, onChange, onRemove }) => {
@@ -337,7 +498,6 @@ const ProjectEditor = ({ project, index, onChange, onRemove }) => {
         </button>
       </div>
       <div className="project-editor-body">
-        {/* Thumbnail */}
         <div
           className={`project-thumb-drop${thumbError ? ' error' : ''}`}
           style={project.thumbPreview ? { backgroundImage: `url(${project.thumbPreview})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
@@ -363,7 +523,6 @@ const ProjectEditor = ({ project, index, onChange, onRemove }) => {
             style={{ display: 'none' }} />
         </div>
         {thumbError && <span className="profile-field-error" style={{ gridColumn: '1/-1' }}><AlertIcon /> {thumbError}</span>}
-
         <div className="project-editor-fields">
           <Field label="Project Title *">
             <input type="text" placeholder="e.g. E-commerce Dashboard"
@@ -405,32 +564,23 @@ const ProjectEditor = ({ project, index, onChange, onRemove }) => {
 };
 
 /* ─────────────────────────────────────────
-   PROJECT CARD — view mode (proper card)
+   PROJECT CARD — view mode
 ───────────────────────────────────────── */
 const ProjectCard = ({ project }) => (
   <div className="proj-card">
-    {/* Thumbnail */}
     <div className="proj-card-thumb">
       {project.thumbPreview
         ? <img src={project.thumbPreview} alt={project.title} className="proj-card-thumb-img" />
         : <div className="proj-card-thumb-fallback">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2"/>
-              <circle cx="8.5" cy="8.5" r="1.5"/>
-              <polyline points="21 15 16 10 5 21"/>
+              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
             </svg>
           </div>
       }
     </div>
-
-    {/* Body */}
     <div className="proj-card-body">
       <h4 className="proj-card-title">{project.title || 'Untitled Project'}</h4>
-      {project.description && (
-        <p className="proj-card-desc">{project.description}</p>
-      )}
-
-      {/* Link buttons */}
+      {project.description && <p className="proj-card-desc">{project.description}</p>}
       <div className="proj-card-links">
         {project.githubUrl && (
           <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="proj-card-btn proj-card-btn--github">
@@ -442,75 +592,61 @@ const ProjectCard = ({ project }) => (
             <ExternalIcon /> Live Demo
           </a>
         )}
-        {!project.githubUrl && !project.liveUrl && (
-          <span className="proj-card-no-links">No links added</span>
-        )}
+        {!project.githubUrl && !project.liveUrl && <span className="proj-card-no-links">No links added</span>}
       </div>
     </div>
   </div>
 );
 
 /* ─────────────────────────────────────────
-   SUBSCRIPTION PLAN CARD (view mode)
+   EXPERIENCE CARD — view mode
 ───────────────────────────────────────── */
-/* ─────────────────────────────────────────
-   SUBSCRIPTION PLANS — Fiverr-style tabs
-───────────────────────────────────────── */
-const PlansTabbed = ({ plans, onSubscribe }) => {
-  const [active, setActive] = useState(plans[0]?.id || '');
-  const plan = plans.find((p) => p.id === active) || plans[0];
-  if (!plan) return null;
-  return (
-    <div className="plans-tabbed">
-      {/* Tab bar */}
-      <div className="plans-tab-bar">
-        {plans.map((p) => (
-          <button
-            key={p.id}
-            type="button"
-            className={`plans-tab${active === p.id ? ' active' : ''}`}
-            style={active === p.id ? { color: p.color, borderBottomColor: p.color } : {}}
-            onClick={() => setActive(p.id)}
-          >
-            {p.name}
-            {p.popular && <span className="plans-tab-badge">Popular</span>}
-          </button>
-        ))}
-      </div>
-
-      {/* Active plan panel */}
-      <div className="plans-panel">
-        <div className="plans-panel-top">
-          <div>
-            <div className="plans-panel-name" style={{ color: plan.color }}>{plan.name}</div>
-            <div className="plans-panel-price">
-              <span className="plans-panel-amount">{plan.price}</span>
-              <span className="plans-panel-period">{plan.period}</span>
-            </div>
-          </div>
-          <button
-            className="plans-panel-btn"
-            style={{ background: plan.color }}
-            onClick={() => onSubscribe(plan)}
-          >
-            Continue →
-          </button>
-        </div>
-
-        <ul className="plans-panel-features">
-          {plan.features.map((f) => (
-            <li key={f} className="plans-panel-feature">
-              <span style={{ color: plan.color }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              </span>
-              {f}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  );
+const formatMonthYear = (month, year) => {
+  if (!month || !year) return '';
+  return `${MONTH_NAMES[parseInt(month, 10) - 1]} ${year}`;
 };
+
+const ExperienceCard = ({ entry }) => (
+  <div className="exp-view-card">
+    <div className="exp-view-dot" />
+    <div className="exp-view-body">
+      <div className="exp-view-role">{entry.role}</div>
+      <div className="exp-view-company">{entry.company}</div>
+      <div className="exp-view-period">
+        {formatMonthYear(entry.startMonth, entry.startYear)}
+        {(entry.startMonth || entry.startYear) ? ' – ' : ''}
+        {entry.current ? <span className="exp-view-current">Present</span> : formatMonthYear(entry.endMonth, entry.endYear)}
+      </div>
+      {entry.description && <p className="exp-view-desc">{entry.description}</p>}
+    </div>
+  </div>
+);
+
+/* ─────────────────────────────────────────
+   CERTIFICATION CARD — view mode
+───────────────────────────────────────── */
+const CertCard = ({ cert }) => (
+  <div className="cert-view-card">
+    <div className="cert-view-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+      </svg>
+    </div>
+    <div className="cert-view-body">
+      <div className="cert-view-name">{cert.name}</div>
+      <div className="cert-view-issuer">{cert.issuer}</div>
+      {(cert.issueMonth || cert.issueYear) && (
+        <div className="cert-view-date">Issued {formatMonthYear(cert.issueMonth, cert.issueYear)}</div>
+      )}
+      {cert.credentialId && <div className="cert-view-id">Credential ID: {cert.credentialId}</div>}
+      {cert.credentialUrl && (
+        <a href={cert.credentialUrl} target="_blank" rel="noopener noreferrer" className="cert-view-link">
+          <ExternalIcon /> Show credential
+        </a>
+      )}
+    </div>
+  </div>
+);
 
 /* ─────────────────────────────────────────
    VIEW MODE
@@ -519,41 +655,11 @@ const ProfileView = ({ data, onEdit }) => {
   const navigate = useNavigate();
   const {
     avatarPreview, displayName, tagline, location, bio,
-    skills, languages, experience, availability,
-    github, linkedin, portfolio, projects, plans,
+    skills, experience, availability,
+    github, linkedin, portfolio,
+    experiences, certifications, projects, plans,
   } = data;
 
-  // Branded social link with correct icon per platform
-  const SocialLink = ({ href, type, label }) => {
-    if (!href) return null;
-    const icons = {
-      github: (
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor">
-          <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
-        </svg>
-      ),
-      linkedin: (
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="#0A66C2">
-          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-        </svg>
-      ),
-      portfolio: (
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
-          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-        </svg>
-      ),
-    };
-    return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={`social-link-item social-link-item--${type}`}>
-        <span className="social-link-icon">{icons[type]}</span>
-        <span className="social-link-label">{label}</span>
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="social-link-ext"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
-      </a>
-    );
-  };
-
-  // Stub reviews (real data comes Day 9)
   const STUB_REVIEWS = [
     { id: 1, name: 'Arjun Mehta', rating: 5, date: 'May 2026', text: 'Excellent work! Delivered ahead of schedule and the code quality was outstanding.' },
     { id: 2, name: 'Priya Sharma', rating: 5, date: 'Apr 2026', text: 'Very professional. Great communicator and the final product exceeded expectations.' },
@@ -600,7 +706,6 @@ const ProfileView = ({ data, onEdit }) => {
                 <span className="profile-view-rating-count">({STUB_REVIEWS.length} reviews)</span>
               </span>
             </div>
-            {/* Social links inside hero — below chips */}
             {(github || linkedin || portfolio) && (
               <div className="hero-social-links">
                 {github && (
@@ -634,10 +739,8 @@ const ProfileView = ({ data, onEdit }) => {
         </div>
       </AppCard>
 
-      {/* Body: sticky left sidebar + right main */}
+      {/* Body: sidebar + main */}
       <div className="profile-view-body">
-
-        {/* ── LEFT sidebar — Skills only, stays short ── */}
         <div className="profile-view-sidebar">
           {skills.length > 0 && (
             <AppCard title="Skills">
@@ -648,9 +751,7 @@ const ProfileView = ({ data, onEdit }) => {
           )}
         </div>
 
-        {/* ── RIGHT main content ── */}
         <div className="profile-view-main">
-
           {/* About */}
           <AppCard title="About">
             {bio
@@ -659,28 +760,58 @@ const ProfileView = ({ data, onEdit }) => {
             }
           </AppCard>
 
+          {/* Work Experience */}
+          {experiences.length > 0 && (
+            <AppCard title="Work Experience" style={{ marginTop: 'var(--space-5)' }}>
+              <div className="exp-view-list">
+                {experiences.map((exp, i) => <ExperienceCard key={exp.id || i} entry={exp} />)}
+              </div>
+            </AppCard>
+          )}
 
+          {/* Certifications */}
+          {certifications.length > 0 && (
+            <AppCard title="Certifications" style={{ marginTop: 'var(--space-5)' }}>
+              <div className="cert-view-list">
+                {certifications.map((cert, i) => <CertCard key={cert.id || i} cert={cert} />)}
+              </div>
+            </AppCard>
+          )}
 
-
-
-
-
+          {/* Reviews */}
+          <AppCard title="Client Reviews" subtitle={`${avgRating} average · ${STUB_REVIEWS.length} reviews`} style={{ marginTop: 'var(--space-5)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+              {STUB_REVIEWS.map((r) => (
+                <div key={r.id} style={{ padding: 'var(--space-4)', background: 'var(--color-bg-secondary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                    <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)', color: 'var(--color-text)' }}>{r.name}</span>
+                    <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>{r.date}</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: 2, marginBottom: 6 }}>
+                    {[1,2,3,4,5].map((i) => (
+                      <svg key={i} width="12" height="12" viewBox="0 0 24 24" fill={i <= r.rating ? 'var(--color-highlight)' : 'none'} stroke="var(--color-highlight)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                      </svg>
+                    ))}
+                  </div>
+                  <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', margin: 0 }}>{r.text}</p>
+                </div>
+              ))}
+            </div>
+          </AppCard>
         </div>
       </div>
 
       {/* Portfolio — full width */}
       {projects.length > 0 && (
-        <AppCard
-          title="Portfolio"
-          subtitle={`${projects.length} project${projects.length > 1 ? 's' : ''}`}
-        >
+        <AppCard title="Portfolio" subtitle={`${projects.length} project${projects.length > 1 ? 's' : ''}`}>
           <div className="proj-cards-grid">
             {projects.map((p, i) => <ProjectCard key={i} project={p} />)}
           </div>
         </AppCard>
       )}
 
-      {/* Subscription Plans — full width, below portfolio */}
+      {/* Subscription Plans — full width */}
       <AppCard
         title="Subscription Plans"
         subtitle="Choose a plan that fits your needs"
@@ -719,7 +850,6 @@ const ProfileView = ({ data, onEdit }) => {
           ))}
         </div>
       </AppCard>
-
     </div>
   );
 };
@@ -741,10 +871,15 @@ const validate = (fields) => {
     if (p.githubUrl && !URL_REGEX.test(p.githubUrl)) e[`proj_github_${i}`] = `Project ${i + 1}: invalid GitHub URL`;
     if (p.liveUrl   && !URL_REGEX.test(p.liveUrl))   e[`proj_live_${i}`]   = `Project ${i + 1}: invalid live URL`;
   });
+  fields.certifications.forEach((c, i) => {
+    if (c.credentialUrl && !URL_REGEX.test(c.credentialUrl)) e[`cert_url_${i}`] = `Cert ${i + 1}: invalid URL`;
+  });
   return e;
 };
 
 const newProject = () => ({ title: '', description: '', githubUrl: '', liveUrl: '', thumbFile: null, thumbPreview: '' });
+const newExperience = () => ({ id: Date.now().toString(), company: '', role: '', startMonth: '', startYear: '', endMonth: '', endYear: '', current: false, description: '' });
+const newCert = () => ({ id: Date.now().toString(), name: '', issuer: '', issueMonth: '', issueYear: '', credentialId: '', credentialUrl: '' });
 
 /* ─────────────────────────────────────────
    MAIN COMPONENT
@@ -758,19 +893,20 @@ const Profile = () => {
   const [avatarPreview, setAvatarPreview] = useState('');
   const [avatarError,   setAvatarError]   = useState('');
 
-  const [displayName,  setDisplayName]  = useState(DEMO_MODE ? DEMO.displayName  : (user?.name || ''));
-  const [tagline,      setTagline]      = useState(DEMO_MODE ? DEMO.tagline      : '');
-  const [location,     setLocation]     = useState(DEMO_MODE ? DEMO.location     : '');
-  const [bio,          setBio]          = useState(DEMO_MODE ? DEMO.bio          : '');
-  const [skills,       setSkills]       = useState(DEMO_MODE ? DEMO.skills       : []);
-  const [languages,    setLanguages]    = useState(DEMO_MODE ? DEMO.languages    : ['English']);
-  const [experience,   setExperience]   = useState(DEMO_MODE ? DEMO.experience   : '');
-  const [availability, setAvailability] = useState(DEMO_MODE ? DEMO.availability : '');
-  const [github,       setGithub]       = useState(DEMO_MODE ? DEMO.github       : '');
-  const [linkedin,     setLinkedin]     = useState(DEMO_MODE ? DEMO.linkedin     : '');
-  const [portfolio,    setPortfolio]    = useState(DEMO_MODE ? DEMO.portfolio    : '');
-  const [projects,     setProjects]     = useState(DEMO_MODE ? DEMO.projects     : []);
-  // Plans always show DEMO_PLANS (read-only here; managed on /subscriptions)
+  const [displayName,     setDisplayName]     = useState(DEMO_MODE ? DEMO.displayName     : (user?.name || ''));
+  const [tagline,         setTagline]         = useState(DEMO_MODE ? DEMO.tagline         : '');
+  const [location,        setLocation]        = useState(DEMO_MODE ? DEMO.location        : '');
+  const [bio,             setBio]             = useState(DEMO_MODE ? DEMO.bio             : '');
+  const [skills,          setSkills]          = useState(DEMO_MODE ? DEMO.skills          : []);
+  const [languages,       setLanguages]       = useState(DEMO_MODE ? DEMO.languages       : ['English']);
+  const [experience,      setExperience]      = useState(DEMO_MODE ? DEMO.experience      : '');
+  const [availability,    setAvailability]    = useState(DEMO_MODE ? DEMO.availability    : '');
+  const [github,          setGithub]          = useState(DEMO_MODE ? DEMO.github          : '');
+  const [linkedin,        setLinkedin]        = useState(DEMO_MODE ? DEMO.linkedin        : '');
+  const [portfolio,       setPortfolio]       = useState(DEMO_MODE ? DEMO.portfolio       : '');
+  const [experiences,     setExperiences]     = useState(DEMO_MODE ? DEMO.experiences     : []);
+  const [certifications,  setCertifications]  = useState(DEMO_MODE ? DEMO.certifications  : []);
+  const [projects,        setProjects]        = useState(DEMO_MODE ? DEMO.projects        : []);
   const plans = DEMO_PLANS;
 
   const [errors, setErrors] = useState({});
@@ -792,8 +928,16 @@ const Profile = () => {
   const removeProject = (i) => setProjects(projects.filter((_, idx) => idx !== i));
   const updateProject = (i, val) => setProjects(projects.map((p, idx) => idx === i ? val : p));
 
+  const addExperience    = () => { if (experiences.length < 10) setExperiences([...experiences, newExperience()]); };
+  const removeExperience = (i) => setExperiences(experiences.filter((_, idx) => idx !== i));
+  const updateExperience = (i, val) => setExperiences(experiences.map((e, idx) => idx === i ? val : e));
+
+  const addCert    = () => { if (certifications.length < 20) setCertifications([...certifications, newCert()]); };
+  const removeCert = (i) => setCertifications(certifications.filter((_, idx) => idx !== i));
+  const updateCert = (i, val) => setCertifications(certifications.map((c, idx) => idx === i ? val : c));
+
   const handleSave = async () => {
-    const e = validate({ displayName, tagline, bio, github, linkedin, portfolio, projects });
+    const e = validate({ displayName, tagline, bio, github, linkedin, portfolio, projects, certifications });
     setErrors(e);
     if (Object.keys(e).length) { showToast('Please fix the errors below.', 'error'); return; }
     setSaving(true);
@@ -810,7 +954,8 @@ const Profile = () => {
   const profileData = {
     avatarPreview, displayName, tagline, location, bio,
     skills, languages, experience, availability,
-    github, linkedin, portfolio, projects, plans,
+    github, linkedin, portfolio,
+    experiences, certifications, projects, plans,
   };
 
   /* ── VIEW MODE ── */
@@ -861,7 +1006,6 @@ const Profile = () => {
             </div>
           </AppCard>
 
-          {/* Subscription Plans summary (read-only in profile) */}
           <AppCard
             title="Subscription Plans"
             subtitle="Managed on the Subscriptions page"
@@ -961,8 +1105,87 @@ const Profile = () => {
               <Field label="Skills" hint="Press Enter or comma to add. Max 15 skills.">
                 <TagInput tags={skills} onChange={setSkills} placeholder="e.g. React, Node.js, UI Design..." />
               </Field>
-
             </div>
+          </AppCard>
+
+          {/* Work Experience */}
+          <AppCard
+            title="Work Experience"
+            subtitle="Your employment history"
+            style={{ marginTop: 'var(--space-5)' }}
+            headerRight={
+              experiences.length < 10 && (
+                <button type="button" className="project-add-btn" onClick={addExperience}>
+                  <PlusIcon /> Add Experience
+                </button>
+              )
+            }
+          >
+            {experiences.length === 0
+              ? (
+                <div className="projects-empty">
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-text-muted)' }}>
+                    <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+                  </svg>
+                  <p>No experience added yet</p>
+                  <button type="button" className="project-add-btn" onClick={addExperience}>
+                    <PlusIcon /> Add your first experience
+                  </button>
+                </div>
+              )
+              : (
+                <div className="projects-editor-list">
+                  {experiences.map((exp, i) => (
+                    <ExperienceEditor key={exp.id || i} entry={exp} index={i} onChange={updateExperience} onRemove={removeExperience} />
+                  ))}
+                  {experiences.length < 10 && (
+                    <button type="button" className="project-add-more-btn" onClick={addExperience}>
+                      <PlusIcon /> Add another experience
+                    </button>
+                  )}
+                </div>
+              )
+            }
+          </AppCard>
+
+          {/* Certifications */}
+          <AppCard
+            title="Certifications"
+            subtitle="Courses, degrees, and credentials"
+            style={{ marginTop: 'var(--space-5)' }}
+            headerRight={
+              certifications.length < 20 && (
+                <button type="button" className="project-add-btn" onClick={addCert}>
+                  <PlusIcon /> Add Certification
+                </button>
+              )
+            }
+          >
+            {certifications.length === 0
+              ? (
+                <div className="projects-empty">
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-text-muted)' }}>
+                    <circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+                  </svg>
+                  <p>No certifications added yet</p>
+                  <button type="button" className="project-add-btn" onClick={addCert}>
+                    <PlusIcon /> Add your first certification
+                  </button>
+                </div>
+              )
+              : (
+                <div className="projects-editor-list">
+                  {certifications.map((cert, i) => (
+                    <CertEditor key={cert.id || i} cert={cert} index={i} onChange={updateCert} onRemove={removeCert} />
+                  ))}
+                  {certifications.length < 20 && (
+                    <button type="button" className="project-add-more-btn" onClick={addCert}>
+                      <PlusIcon /> Add another certification
+                    </button>
+                  )}
+                </div>
+              )
+            }
           </AppCard>
 
           {/* Portfolio */}
