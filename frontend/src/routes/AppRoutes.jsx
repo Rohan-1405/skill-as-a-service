@@ -13,14 +13,21 @@ import PlanCreationForms from '../pages/freelancer/PlanCreationForms';
 const Register             = lazy(() => import('../pages/auth/Register'));
 const FreelancerDashboard  = lazy(() => import('../pages/freelancer/FreelancerDashboard'));
 const FreelancerProfile    = lazy(() => import('../pages/freelancer/FreelancerProfile'));
-const ClientDashboard      = lazy(() => import('../pages/client/ClientDashboard'));
-const SubscriptionPurchase = lazy(() => import('../pages/client/SubscriptionPurchase'));
-const WalletPage           = lazy(() => import('../pages/wallet/WalletPage'));
-const InvoicesPage         = lazy(() => import('../pages/wallet/InvoicesPage'));
 
-// ── Day 9 & Day 10 — Praveen Gorla ───────────────────────────
+// ── Praveen Day 9 & 10 ────────────────────────────────────────
 const TaskManagement = lazy(() => import('../pages/freelancer/TaskManagement'));
 const GroupChat      = lazy(() => import('../pages/freelancer/GroupChat'));
+
+// ── Client pages ──────────────────────────────────────────────
+const ClientDashboard      = lazy(() => import('../pages/client/ClientDashboard'));
+const ClientSubscriptions  = lazy(() => import('../pages/client/ClientSubscriptions'));
+const ClientProjects       = lazy(() => import('../pages/client/ClientProjects'));
+const ClientMessages       = lazy(() => import('../pages/client/ClientMessages'));
+const ClientProfile        = lazy(() => import('../pages/client/ClientProfile'));
+const ClientSettings       = lazy(() => import('../pages/client/ClientSettings'));
+const ClientWallet         = lazy(() => import('../pages/client/ClientWallet'));
+const ClientInvoices       = lazy(() => import('../pages/client/ClientInvoices'));
+const SubscriptionPurchase = lazy(() => import('../pages/client/SubscriptionPurchase'));
 
 // ── Route Guards ──────────────────────────────────────────────
 function PrivateRoute({ children, role }) {
@@ -44,32 +51,15 @@ function PublicRoute({ children }) {
 
 function NotFound() {
   return (
-    <div style={{
-      minHeight: '100vh', display: 'flex', alignItems: 'center',
-      justifyContent: 'center', background: 'var(--color-bg)',
-      flexDirection: 'column', gap: '20px', textAlign: 'center', padding: '20px',
-      fontFamily: 'var(--font-family)',
-    }}>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg)', flexDirection: 'column', gap: '20px', textAlign: 'center', padding: '20px', fontFamily: 'var(--font-family)' }}>
       <div style={{ fontSize: '4rem', fontWeight: '800', color: 'var(--color-primary)' }}>404</div>
       <h2 style={{ color: 'var(--color-text)', fontWeight: 700 }}>Page Not Found</h2>
       <p style={{ color: 'var(--color-text-muted)' }}>The page you're looking for doesn't exist.</p>
-      <a href="/" style={{
-        background: 'var(--gradient-blue)', color: '#fff',
-        padding: '11px 28px', borderRadius: 'var(--radius-sm)',
-        fontWeight: '600', textDecoration: 'none', boxShadow: 'var(--shadow-btn)',
-      }}>Go Home</a>
+      <a href="/" style={{ background: 'var(--gradient-blue)', color: '#fff', padding: '11px 28px', borderRadius: 'var(--radius-sm)', fontWeight: '600', textDecoration: 'none', boxShadow: 'var(--shadow-btn)' }}>Go Home</a>
     </div>
   );
 }
 
-// ─────────────────────────────────────────────────────────────
-// ROUTE ARCHITECTURE:
-//   • All specific paths declared BEFORE their wildcard siblings
-//   • Client sub-pages (/wallet, /invoices) are explicit routes
-//   • Old PascalCase paths redirect to correct kebab-case URLs
-//   • Day 9  → /freelancer/tasks      (TaskManagement — Praveen)
-//   • Day 10 → /freelancer/group-chat (GroupChat      — Praveen)
-// ─────────────────────────────────────────────────────────────
 const AppRoutes = () => (
   <Suspense fallback={<div style={{ minHeight: '100vh', background: 'var(--color-bg)' }} />}>
     <Routes>
@@ -86,38 +76,37 @@ const AppRoutes = () => (
       {/* Generic dashboard */}
       <Route path="/dashboard" element={<Dashboard />} />
 
-      {/* ── FREELANCER (specific first, wildcard last) ── */}
+      {/* ── FREELANCER (specific before wildcard) ── */}
       <Route path="/freelancer/dashboard"     element={<FreelancerDashboard />} />
       <Route path="/freelancer/profile"       element={<FreelancerProfile />} />
       <Route path="/freelancer/plan-creation" element={<PlanCreationForms />} />
-
-      {/* Day 9  — Praveen Gorla: Task Management UI */}
       <Route path="/freelancer/tasks"         element={<TaskManagement />} />
-
-      {/* Day 10 — Praveen Gorla: Group Chat UI */}
       <Route path="/freelancer/group-chat"    element={<GroupChat />} />
-
+      {/* Legacy PascalCase redirects */}
       <Route path="/FreelancerDashboard"      element={<FreelancerDashboard />} />
       <Route path="/FreelancerProfile"        element={<FreelancerProfile />} />
       <Route path="/freelancer/*"             element={<FreelancerDashboard />} />
 
-      {/* ── CLIENT (specific first, wildcard last) ── */}
+      {/* ── CLIENT (specific before wildcard) ── */}
       <Route path="/client/dashboard"         element={<ClientDashboard />} />
-      <Route path="/client/wallet"            element={<WalletPage />} />
-      <Route path="/client/invoices"          element={<InvoicesPage />} />
-      <Route path="/client/subscriptions"     element={<ClientDashboard />} />
+      <Route path="/client/subscriptions"     element={<ClientSubscriptions />} />
+      <Route path="/client/projects"          element={<ClientProjects />} />
+      <Route path="/client/messages"          element={<ClientMessages />} />
+      <Route path="/client/profile"           element={<ClientProfile />} />
+      <Route path="/client/settings"          element={<ClientSettings />} />
+      <Route path="/client/wallet"            element={<ClientWallet />} />
+      <Route path="/client/invoices"          element={<ClientInvoices />} />
       <Route path="/client/:id/subscribe"     element={<SubscriptionPurchase />} />
+
+      {/* Legacy redirects */}
       <Route path="/ClientDashboard"          element={<ClientDashboard />} />
+      <Route path="/client/WalletPage"        element={<Navigate to="/client/wallet"   replace />} />
+      <Route path="/client/InvoicesPage"      element={<Navigate to="/client/invoices" replace />} />
+      <Route path="/WalletPage"               element={<Navigate to="/client/wallet"   replace />} />
+      <Route path="/InvoicesPage"             element={<Navigate to="/client/invoices" replace />} />
 
-      {/* Stale/legacy PascalCase URLs — redirect BEFORE the wildcard */}
-      <Route path="/client/WalletPage"   element={<Navigate to="/client/wallet"   replace />} />
-      <Route path="/client/InvoicesPage" element={<Navigate to="/client/invoices" replace />} />
-
+      {/* Wildcard fallback for client */}
       <Route path="/client/*"                 element={<ClientDashboard />} />
-
-      {/* Legacy PascalCase redirects (root-level) */}
-      <Route path="/WalletPage"   element={<Navigate to="/client/wallet"   replace />} />
-      <Route path="/InvoicesPage" element={<Navigate to="/client/invoices" replace />} />
 
       {/* 404 */}
       <Route path="*" element={<NotFound />} />

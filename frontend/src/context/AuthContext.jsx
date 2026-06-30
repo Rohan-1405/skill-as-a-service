@@ -5,31 +5,45 @@ import React, { createContext, useContext, useState } from 'react';
  *
  * Provides: { user, token, isAuthenticated, login, logout }
  *
- * Usage:
- *   import { useAuthContext } from '../context/AuthContext';
- *   const { user, isAuthenticated } = useAuthContext();
- *
- * Day 2 / API integration: replace the stub login/logout with authService calls.
+ * login(userData, accessToken, role)
+ *   - role must be 'freelancer' | 'client' | 'admin'
+ *   - writes saas_token + saas_role to localStorage so PrivateRoute works
  */
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser]   = useState(null);
+  const [user,  setUser]  = useState(() => {
+    try { return JSON.parse(localStorage.getItem('saas_user')) || null; } catch { return null; }
+  });
   const [token, setToken] = useState(localStorage.getItem('saas_token') || null);
 
   const isAuthenticated = !!token;
 
-  const login = (userData, accessToken) => {
+  /**
+   * Call this after a successful login or social-auth callback.
+   * @param {object} userData  - { name, email, ... } from the backend
+   * @param {string} accessToken
+   * @param {string} role      - 'freelancer' | 'client' | 'admin'
+   */
+  const login = (userData, accessToken, role) => {
     setUser(userData);
     setToken(accessToken);
     localStorage.setItem('saas_token', accessToken);
+    // ── FIX B4: write role so PrivateRoute guard can read it ──
+    if (role) {
+      localStorage.setItem('saas_role', role);
+    }
+    // Persist user object so page-refresh restores name/email
+    localStorage.setItem('saas_user', JSON.stringify(userData));
   };
 
   const logout = () => {
     setUser(null);
     setToken(null);
     localStorage.removeItem('saas_token');
+    localStorage.removeItem('saas_role');
+    localStorage.removeItem('saas_user');
   };
 
   return (
