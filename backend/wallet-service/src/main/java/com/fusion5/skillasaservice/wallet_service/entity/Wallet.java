@@ -23,6 +23,9 @@ public class Wallet {
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal balance = BigDecimal.ZERO;
 
+    @Column(name = "locked_balance", nullable = false, precision = 15, scale = 2)
+    private BigDecimal lockedBalance = BigDecimal.ZERO;
+
     @Column(nullable = false, length = 3)
     private String currency = "INR";
 

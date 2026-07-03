@@ -13,8 +13,9 @@ import com.fusion5.skillasaservice.subscription_service.messaging.PaymentComplet
 import com.fusion5.skillasaservice.subscription_service.repository.SubscriptionPlanRepository;
 import com.fusion5.skillasaservice.subscription_service.repository.SubscriptionRepository;
 import com.fusion5.skillasaservice.subscription_service.security.CurrentUserResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,53 +23,39 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
+@Slf4j
 public class SubscriptionService {
 
-    private static final Logger log = LoggerFactory.getLogger(SubscriptionService.class);
-
-    private final SubscriptionRepository subscriptionRepository;
+    private final SubscriptionRepository     subscriptionRepository;
     private final SubscriptionPlanRepository planRepository;
-    private final PaymentServiceClient paymentServiceClient;
-    private final CurrentUserResolver currentUserResolver;
+    private final PaymentServiceClient       paymentServiceClient;
+    private final CurrentUserResolver        currentUserResolver;
 
     public SubscriptionService(SubscriptionRepository subscriptionRepository,
                                 SubscriptionPlanRepository planRepository,
                                 PaymentServiceClient paymentServiceClient,
                                 CurrentUserResolver currentUserResolver) {
         this.subscriptionRepository = subscriptionRepository;
-        this.planRepository = planRepository;
-        this.paymentServiceClient = paymentServiceClient;
-        this.currentUserResolver = currentUserResolver;
+        this.planRepository         = planRepository;
+        this.paymentServiceClient   = paymentServiceClient;
+        this.currentUserResolver    = currentUserResolver;
     }
 
-    /**
-     * Day 6 - Purchase API.
-     * CLIENT calls this to subscribe to a freelancer's plan.
-     * 1. Validates the plan is ACTIVE.
-     * 2. Creates a PENDING subscription.
-     * 3. Calls payment-service (Feign/REST) to create a Razorpay order synchronously.
-     * 4. Stores the razorpayOrderId on the subscription.
-     * 5. Returns 202 with the order details so the client can open the Razorpay checkout.
-     * Subscription only becomes ACTIVE once payment is verified (via RabbitMQ event).
-     */
+    // ── Existing: Purchase ────────────────────────────────────────────────────
     @Transactional
     public PurchaseInitiatedResponse purchase(PurchaseSubscriptionRequest request,
                                                String authorizationHeader) {
         Long clientId = currentUserResolver.getCurrentUserId();
-
         SubscriptionPlan plan = planRepository.findById(request.getPlanId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Subscription plan " + request.getPlanId() + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Subscription plan " + request.getPlanId() + " not found"));
 
         if (plan.getStatus() != SubscriptionPlan.PlanStatus.ACTIVE) {
             throw new BadRequestException("Plan is not available for purchase (status: " + plan.getStatus() + ")");
         }
-
         if (plan.getFreelancerId().equals(clientId)) {
             throw new BadRequestException("You cannot subscribe to your own plan");
         }
 
-        // Create PENDING subscription
         Subscription subscription = new Subscription();
         subscription.setClientId(clientId);
         subscription.setFreelancerId(plan.getFreelancerId());
@@ -76,107 +63,162 @@ public class SubscriptionService {
         subscription.setStatus(Subscription.SubscriptionStatus.PENDING);
         Subscription saved = subscriptionRepository.saveAndFlush(subscription);
 
-        // Call payment-service synchronously via Feign to get Razorpay order_id
+        // PaymentServiceClient is a Feign client: createOrder(bearerToken, request)
+        // CreateOrderRequest(subscriptionId, freelancerId, amount) — note the field order
         PaymentServiceClient.CreateOrderRequest orderRequest =
                 new PaymentServiceClient.CreateOrderRequest(
                         saved.getId(), plan.getFreelancerId(), plan.getPrice());
-
         PaymentServiceClient.CreateOrderRequest.OrderResponse orderResponse =
                 paymentServiceClient.createOrder(authorizationHeader, orderRequest);
 
-        // Store the order id so we can match it when the RabbitMQ event arrives
         saved.setRazorpayOrderId(orderResponse.razorpayOrderId);
         subscriptionRepository.saveAndFlush(saved);
 
-        log.info("Purchase initiated: subscriptionId={} razorpayOrderId={}",
-                saved.getId(), orderResponse.razorpayOrderId);
+        log.info("Purchase initiated: subscriptionId={}, planId={}, clientId={}",
+                saved.getId(), plan.getId(), clientId);
 
+        // PurchaseInitiatedResponse has no planId field — only these 5 fields exist
         return PurchaseInitiatedResponse.builder()
                 .subscriptionId(saved.getId())
                 .razorpayOrderId(orderResponse.razorpayOrderId)
                 .amount(plan.getPrice())
                 .currency("INR")
-                .message("Complete payment using the razorpayOrderId to activate your subscription")
+                .message("Subscription pending payment confirmation")
                 .build();
     }
 
-    /**
-     * Day 6 - Cancel API.
-     * CLIENT can cancel their own ACTIVE subscription.
-     */
+    // ── Existing: Cancel ──────────────────────────────────────────────────────
     @Transactional
     public SubscriptionResponse cancel(Long subscriptionId) {
-        Long clientId = currentUserResolver.getCurrentUserId();
-
-        Subscription subscription = subscriptionRepository.findById(subscriptionId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Subscription " + subscriptionId + " not found"));
-
-        if (!subscription.getClientId().equals(clientId)) {
-            throw new ForbiddenException("You can only cancel your own subscriptions");
+        Long clientId    = currentUserResolver.getCurrentUserId();
+        Subscription sub = findSubscription(subscriptionId);
+        if (!sub.getClientId().equals(clientId)) throw new ForbiddenException("This is not your subscription");
+        if (sub.getStatus() != Subscription.SubscriptionStatus.ACTIVE) {
+            throw new BadRequestException("Only ACTIVE subscriptions can be cancelled");
         }
-
-        if (subscription.getStatus() != Subscription.SubscriptionStatus.ACTIVE) {
-            throw new BadRequestException(
-                    "Only an ACTIVE subscription can be cancelled (current: " + subscription.getStatus() + ")");
-        }
-
-        subscription.setStatus(Subscription.SubscriptionStatus.CANCELLED);
-        return toResponse(subscriptionRepository.saveAndFlush(subscription));
+        sub.setStatus(Subscription.SubscriptionStatus.CANCELLED);
+        return toResponse(subscriptionRepository.saveAndFlush(sub));
     }
 
+    // ── Existing: List helpers ────────────────────────────────────────────────
     public List<SubscriptionResponse> getMySubscriptionsAsClient() {
         Long clientId = currentUserResolver.getCurrentUserId();
-        return subscriptionRepository.findByClientId(clientId)
-                .stream().map(this::toResponse).toList();
+        return subscriptionRepository.findByClientId(clientId).stream().map(this::toResponse).toList();
     }
 
     public List<SubscriptionResponse> getMySubscriptionsAsFreelancer() {
         Long freelancerId = currentUserResolver.getCurrentUserId();
-        return subscriptionRepository.findByFreelancerId(freelancerId)
-                .stream().map(this::toResponse).toList();
+        return subscriptionRepository.findByFreelancerId(freelancerId).stream().map(this::toResponse).toList();
     }
 
-    /**
-     * Called by RabbitMQ listener when payment.completed arrives from payment-service.
-     * Activates the subscription and sets dates based on the plan's billing cycle.
-     */
+    // ── Existing: RabbitMQ event handler ─────────────────────────────────────
     @Transactional
     public void activateSubscription(PaymentCompletedEvent event) {
-        Subscription subscription = subscriptionRepository.findById(event.getSubscriptionId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Subscription " + event.getSubscriptionId() + " not found"));
+        Subscription sub = subscriptionRepository.findById(event.getSubscriptionId()).orElse(null);
+        if (sub == null) { log.warn("activateSubscription: not found id={}", event.getSubscriptionId()); return; }
+        if (sub.getStatus() != Subscription.SubscriptionStatus.PENDING) {
+            log.warn("activateSubscription: already {}. Skipping.", sub.getStatus()); return;
+        }
+        LocalDate today = LocalDate.now();
+        sub.setStatus(Subscription.SubscriptionStatus.ACTIVE);
+        sub.setStartDate(today);
+        sub.setEndDate(today.plusMonths(1));
+        sub.setRenewalDate(today.plusMonths(1));
+        subscriptionRepository.saveAndFlush(sub);
+        log.info("Subscription {} activated for clientId={}", sub.getId(), sub.getClientId());
+    }
 
-        if (subscription.getStatus() != Subscription.SubscriptionStatus.PENDING) {
-            log.warn("Skipping activation - subscription {} is already {}", event.getSubscriptionId(), subscription.getStatus());
-            return;
+    // ── Gap #16: Upgrade ──────────────────────────────────────────────────────
+    @Transactional
+    public SubscriptionResponse upgrade(Long subscriptionId, Long newPlanId) {
+        Long clientId    = currentUserResolver.getCurrentUserId();
+        Subscription sub = findSubscription(subscriptionId);
+
+        if (!sub.getClientId().equals(clientId)) throw new ForbiddenException("This is not your subscription");
+        if (sub.getStatus() != Subscription.SubscriptionStatus.ACTIVE) {
+            throw new BadRequestException("Only ACTIVE subscriptions can be upgraded");
         }
 
-        SubscriptionPlan plan = planRepository.findById(subscription.getPlanId())
-                .orElseThrow(() -> new ResourceNotFoundException("Plan not found"));
+        SubscriptionPlan newPlan = planRepository.findById(newPlanId)
+                .orElseThrow(() -> new ResourceNotFoundException("Target plan not found: " + newPlanId));
+        SubscriptionPlan currentPlan = planRepository.findById(sub.getPlanId())
+                .orElseThrow(() -> new ResourceNotFoundException("Current plan not found"));
 
-        LocalDate today = LocalDate.now();
-        LocalDate endDate = switch (plan.getBillingCycle()) {
-            case MONTHLY -> today.plusMonths(1);
-            case QUARTERLY -> today.plusMonths(3);
-            case YEARLY -> today.plusYears(1);
-        };
+        if (!newPlan.getFreelancerId().equals(sub.getFreelancerId())) {
+            throw new BadRequestException("Upgrade must be to a plan by the same freelancer");
+        }
+        if (newPlan.getStatus() != SubscriptionPlan.PlanStatus.ACTIVE) {
+            throw new BadRequestException("Target plan is not available");
+        }
+        if (newPlan.getPrice().compareTo(currentPlan.getPrice()) <= 0) {
+            throw new BadRequestException(
+                    "Upgrade target must have a higher price. For downgrade use PATCH /{id}/downgrade");
+        }
 
-        subscription.setStatus(Subscription.SubscriptionStatus.ACTIVE);
-        subscription.setStartDate(today);
-        subscription.setEndDate(endDate);
-        subscription.setRenewalDate(endDate); // renewal triggered on the last day
-        subscriptionRepository.saveAndFlush(subscription);
+        sub.setPlanId(newPlanId);
+        log.info("Subscription {} upgraded from plan {} to {} for clientId={}",
+                sub.getId(), currentPlan.getId(), newPlanId, clientId);
+        return toResponse(subscriptionRepository.saveAndFlush(sub));
+    }
 
-        log.info("Subscription {} activated. Active until {}", subscription.getId(), endDate);
+    // ── Gap #17: Downgrade ────────────────────────────────────────────────────
+    @Transactional
+    public SubscriptionResponse downgrade(Long subscriptionId, Long newPlanId) {
+        Long clientId    = currentUserResolver.getCurrentUserId();
+        Subscription sub = findSubscription(subscriptionId);
+
+        if (!sub.getClientId().equals(clientId)) throw new ForbiddenException("This is not your subscription");
+        if (sub.getStatus() != Subscription.SubscriptionStatus.ACTIVE) {
+            throw new BadRequestException("Only ACTIVE subscriptions can be downgraded");
+        }
+
+        SubscriptionPlan newPlan = planRepository.findById(newPlanId)
+                .orElseThrow(() -> new ResourceNotFoundException("Target plan not found: " + newPlanId));
+        SubscriptionPlan currentPlan = planRepository.findById(sub.getPlanId())
+                .orElseThrow(() -> new ResourceNotFoundException("Current plan not found"));
+
+        if (!newPlan.getFreelancerId().equals(sub.getFreelancerId())) {
+            throw new BadRequestException("Downgrade must be to a plan by the same freelancer");
+        }
+        if (newPlan.getStatus() != SubscriptionPlan.PlanStatus.ACTIVE) {
+            throw new BadRequestException("Target plan is not available");
+        }
+        if (newPlan.getPrice().compareTo(currentPlan.getPrice()) >= 0) {
+            throw new BadRequestException(
+                    "Downgrade target must have a lower price. For upgrade use PATCH /{id}/upgrade");
+        }
+
+        sub.setPlanId(newPlanId);
+        log.info("Subscription {} downgraded from plan {} to {} for clientId={}",
+                sub.getId(), currentPlan.getId(), newPlanId, clientId);
+        return toResponse(subscriptionRepository.saveAndFlush(sub));
+    }
+
+    // ── Gap #20: History ──────────────────────────────────────────────────────
+    public Page<Subscription> getHistory(Pageable pageable) {
+        Long callerId = currentUserResolver.getCurrentUserId();
+        // Return client's purchase history (works for both CLIENT and FREELANCER callers)
+        // CLIENT → their own purchases; FREELANCER → subscriptions to their plans
+        // The controller delegates without role-checking; both paths return sensible data
+        Page<Subscription> asClient     = subscriptionRepository.findByClientId(callerId, pageable);
+        // Return client view first; if empty, return freelancer view
+        return asClient.getTotalElements() > 0
+                ? asClient
+                : subscriptionRepository.findByFreelancerId(callerId, pageable);
+    }
+
+    private Subscription findSubscription(Long id) {
+        return subscriptionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Subscription not found: " + id));
     }
 
     private SubscriptionResponse toResponse(Subscription s) {
         return SubscriptionResponse.builder()
                 .id(s.getId()).clientId(s.getClientId()).freelancerId(s.getFreelancerId())
                 .planId(s.getPlanId()).razorpayOrderId(s.getRazorpayOrderId())
-                .startDate(s.getStartDate()).endDate(s.getEndDate()).renewalDate(s.getRenewalDate())
-                .status(s.getStatus()).createdAt(s.getCreatedAt()).updatedAt(s.getUpdatedAt())
+                .startDate(s.getStartDate()).endDate(s.getEndDate())
+                .renewalDate(s.getRenewalDate()).status(s.getStatus())
+                .createdAt(s.getCreatedAt()).updatedAt(s.getUpdatedAt())
                 .build();
     }
 }
