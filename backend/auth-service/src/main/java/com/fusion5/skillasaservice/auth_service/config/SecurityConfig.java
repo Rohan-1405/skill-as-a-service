@@ -52,8 +52,10 @@ public class SecurityConfig {
                 ).permitAll()
                 // 2FA setup / confirm / disable require a valid access token
                 .requestMatchers("/api/auth/2fa/**").authenticated()
-                // Audit log viewing is admin-only
-                .requestMatchers("/api/admin/audit-logs/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+                // Audit log viewing is admin-only (SUPER_ADMIN, or ADMIN with SETTINGS permission)
+                .requestMatchers("/api/admin/audit-logs/**")
+                    .access(new org.springframework.security.web.access.expression.WebExpressionAuthorizationManager(
+                            "hasRole('SUPER_ADMIN') or hasAuthority('PERM_SETTINGS')"))
                 // All other auth-service paths are public
                 .anyRequest().permitAll()
             )

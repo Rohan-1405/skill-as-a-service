@@ -16,5 +16,7 @@ public class JwtUtil {
     public String extractUserId(String token) { return extractAllClaims(token).getSubject(); }
     @SuppressWarnings("unchecked")
     public List<String> extractRoles(String token) { return extractAllClaims(token).get("roles", List.class); }
+    @SuppressWarnings("unchecked")
+    public List<String> extractPermissions(String token) { return extractAllClaims(token).get("permissions", List.class); }
     public boolean isTokenValid(String token) { try { extractAllClaims(token); return true; } catch (Exception e) { return false; } }
 }

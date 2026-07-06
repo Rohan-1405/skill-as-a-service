@@ -25,7 +25,7 @@ public class LanguageController {
     }
 
     @PostMapping("/api/admin/languages")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_CMS')")
     public ResponseEntity<ApiResponse<Language>> create(@Valid @RequestBody CreateLanguageRequest req) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Language added", languageService.create(req)));
     }

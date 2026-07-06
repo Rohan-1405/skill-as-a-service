@@ -23,11 +23,12 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public String generateAccessToken(String userId, String email, List<String> roles) {
+    public String generateAccessToken(String userId, String email, List<String> roles, List<String> permissions) {
         return Jwts.builder()
                 .subject(userId)
                 .claim("email", email)
                 .claim("roles", roles)
+                .claim("permissions", permissions)
                 .claim("type", "ACCESS")
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + accessTokenExpiry))

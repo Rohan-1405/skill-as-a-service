@@ -24,4 +24,9 @@ public class CreateRoomRequest {
     // For GROUP
     private String name;
     private List<Long> memberUserIds;
+
+    /** Optional. If set, links this ad-hoc group room to a project (same field the
+     *  auto-created team rooms use). Rejected with 400 if a room already exists for
+     *  that project — one project should have exactly one group room. */
+    private Long projectId;
 }

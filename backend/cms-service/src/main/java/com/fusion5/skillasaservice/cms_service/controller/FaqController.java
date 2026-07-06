@@ -26,19 +26,19 @@ public class FaqController {
     }
 
     @PostMapping("/api/admin/cms/faqs")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_CMS')")
     public ResponseEntity<ApiResponse<Faq>> create(@Valid @RequestBody CreateFaqRequest req) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("FAQ created", faqService.create(req)));
     }
 
     @PutMapping("/api/admin/cms/faqs/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_CMS')")
     public ResponseEntity<ApiResponse<Faq>> update(@PathVariable Long id, @Valid @RequestBody UpdateFaqRequest req) {
         return ResponseEntity.ok(ApiResponse.success("FAQ updated", faqService.update(id, req)));
     }
 
     @DeleteMapping("/api/admin/cms/faqs/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_CMS')")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         faqService.delete(id);
         return ResponseEntity.ok(ApiResponse.success("FAQ deleted", null));

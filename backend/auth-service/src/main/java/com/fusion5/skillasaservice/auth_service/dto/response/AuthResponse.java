@@ -13,6 +13,11 @@ public class AuthResponse {
     private String userId;
     private String email;
     private List<String> roles;
+
+    /** Admin sub-permissions (KYC, WITHDRAWALS, etc.) — empty for non-admin users and for
+     *  SUPER_ADMIN (who bypasses permission checks via role, not this list). */
+    private List<String> permissions;
+
     private String message;
 
     // ── 2FA gate fields ────────────────────────────────────────────────────────

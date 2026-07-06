@@ -25,7 +25,7 @@ public class TranslationController {
 
     /** PUT /api/admin/languages/{code}/translations — admin-only bulk upsert */
     @PutMapping("/api/admin/languages/{code}/translations")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_CMS')")
     public ResponseEntity<ApiResponse<Map<String, String>>> update(
             @PathVariable String code, @Valid @RequestBody UpdateTranslationsRequest req) {
         return ResponseEntity.ok(ApiResponse.success("Translations updated", translationService.bulkUpsert(code, req)));

@@ -64,6 +64,19 @@ public class User {
     )
     private Set<Role> roles = new HashSet<>();
 
+    /** Admin sub-permissions (KYC, WITHDRAWALS, PAYMENTS, etc.) — only meaningful when
+     *  this user has the ADMIN role. SUPER_ADMIN bypasses permission checks entirely
+     *  (checked as a role, not via this set) so it's normal for SUPER_ADMIN accounts to
+     *  have an empty permissions set. */
+    @Builder.Default
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "admin_user_permissions",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "permission_id")
+    )
+    private Set<Permission> permissions = new HashSet<>();
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

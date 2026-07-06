@@ -179,7 +179,8 @@ public class AuthService {
 
         // Rotate: generate new pair and overwrite Redis
         List<String> roles = user.getRoles().stream().map(Role::getRoleName).collect(Collectors.toList());
-        String newAccessToken  = jwtUtil.generateAccessToken(user.getUuid(), user.getEmail(), roles);
+        List<String> permissions = extractPermissions(user, roles);
+        String newAccessToken  = jwtUtil.generateAccessToken(user.getUuid(), user.getEmail(), roles, permissions);
         String newRefreshToken = jwtUtil.generateRefreshToken(user.getUuid());
 
         redisTemplate.opsForValue().set("access_token:"  + user.getUuid(), newAccessToken,  15, TimeUnit.MINUTES);
@@ -193,6 +194,7 @@ public class AuthService {
                 .userId(user.getUuid())
                 .email(user.getEmail())
                 .roles(roles)
+                .permissions(permissions)
                 .message("Token refreshed")
                 .build());
     }
@@ -330,15 +332,23 @@ public class AuthService {
 
     private AuthResponse buildAuthResponse(User user, String message) {
         List<String> roles = user.getRoles().stream().map(Role::getRoleName).collect(Collectors.toList());
-        String accessToken  = jwtUtil.generateAccessToken(user.getUuid(), user.getEmail(), roles);
+        List<String> permissions = extractPermissions(user, roles);
+        String accessToken  = jwtUtil.generateAccessToken(user.getUuid(), user.getEmail(), roles, permissions);
         String refreshToken = jwtUtil.generateRefreshToken(user.getUuid());
         redisTemplate.opsForValue().set("access_token:"  + user.getUuid(), accessToken,  15, TimeUnit.MINUTES);
         redisTemplate.opsForValue().set("refresh_token:" + user.getUuid(), refreshToken,  7, TimeUnit.DAYS);
         return AuthResponse.builder()
                 .accessToken(accessToken).refreshToken(refreshToken)
                 .userId(user.getUuid()).email(user.getEmail())
-                .roles(roles).message(message)
+                .roles(roles).permissions(permissions).message(message)
                 .build();
+    }
+
+    /** Permissions only matter for the ADMIN role — SUPER_ADMIN bypasses permission
+     *  checks entirely (via role, not this list), and FREELANCER/CLIENT never have any. */
+    private List<String> extractPermissions(User user, List<String> roles) {
+        if (!roles.contains("ADMIN")) return List.of();
+        return user.getPermissions().stream().map(Permission::getPermissionName).collect(Collectors.toList());
     }
 
     private OAuthUserInfo fetchGoogleUser(String accessToken) {

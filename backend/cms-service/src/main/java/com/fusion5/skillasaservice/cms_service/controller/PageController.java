@@ -35,25 +35,25 @@ public class PageController {
     // ── Admin ───────────────────────────────────────────────────────────────
 
     @GetMapping("/api/admin/cms/pages")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_CMS')")
     public ResponseEntity<ApiResponse<List<Page>>> listAllForAdmin() {
         return ResponseEntity.ok(ApiResponse.success("OK", pageService.listAllForAdmin()));
     }
 
     @PostMapping("/api/admin/cms/pages")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_CMS')")
     public ResponseEntity<ApiResponse<Page>> create(@Valid @RequestBody CreatePageRequest req) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Page created", pageService.create(req)));
     }
 
     @PutMapping("/api/admin/cms/pages/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_CMS')")
     public ResponseEntity<ApiResponse<Page>> update(@PathVariable Long id, @Valid @RequestBody UpdatePageRequest req) {
         return ResponseEntity.ok(ApiResponse.success("Page updated", pageService.update(id, req)));
     }
 
     @DeleteMapping("/api/admin/cms/pages/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_CMS')")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         pageService.delete(id);
         return ResponseEntity.ok(ApiResponse.success("Page deleted", null));

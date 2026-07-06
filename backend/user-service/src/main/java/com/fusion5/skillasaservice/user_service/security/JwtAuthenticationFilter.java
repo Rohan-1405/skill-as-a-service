@@ -44,11 +44,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (jwtUtil.isTokenValid(token)) {
                 String userId = jwtUtil.extractUserId(token);
                 List<String> roles = jwtUtil.extractRoles(token);
+                List<String> permissions = jwtUtil.extractPermissions(token);
 
-                List<GrantedAuthority> authorities = roles == null ? List.of() :
-                        roles.stream()
-                                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                                .collect(Collectors.toList());
+                List<GrantedAuthority> authorities = new java.util.ArrayList<>();
+                if (roles != null) {
+                    roles.forEach(role -> authorities.add(new SimpleGrantedAuthority("ROLE_" + role)));
+                }
+                if (permissions != null) {
+                    // Distinct prefix from roles — @PreAuthorize checks these via hasAuthority('PERM_X'),
+                    // never hasRole(), since these aren't roles.
+                    permissions.forEach(perm -> authorities.add(new SimpleGrantedAuthority("PERM_" + perm)));
+                }
 
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(userId, null, authorities);

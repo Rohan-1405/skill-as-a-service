@@ -24,7 +24,7 @@ public class AdminWalletController {
      * Query: ?status=PENDING  (PENDING | APPROVED | REJECTED | PROCESSED | FAILED)
      */
     @GetMapping("/withdrawals")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_WITHDRAWALS')")
     public Page<Withdrawal> listAll(
             @RequestParam(required = false) String status,
             @RequestParam(defaultValue = "0")  int page,
@@ -38,7 +38,7 @@ public class AdminWalletController {
      * Approve a PENDING withdrawal — auto-payout scheduler processes it next run.
      */
     @PatchMapping("/withdrawals/{id}/approve")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_WITHDRAWALS')")
     public Withdrawal approve(@PathVariable Long id) {
         return withdrawalService.approve(id);
     }
@@ -49,7 +49,7 @@ public class AdminWalletController {
      * Body: { "reason": "..." }
      */
     @PatchMapping("/withdrawals/{id}/reject")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_WITHDRAWALS')")
     public Withdrawal reject(
             @PathVariable Long id,
             @Valid @RequestBody WithdrawalRejectRequest request) {

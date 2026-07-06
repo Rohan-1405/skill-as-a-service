@@ -1,13 +1,16 @@
 package com.fusion5.skillasaservice.user_service.service;
 
 import com.fusion5.skillasaservice.user_service.dto.request.AssignRolesRequest;
+import com.fusion5.skillasaservice.user_service.dto.request.UpdatePermissionsRequest;
 import com.fusion5.skillasaservice.user_service.dto.request.UpdateUserRequest;
 import com.fusion5.skillasaservice.user_service.dto.response.PagedUserResponse;
 import com.fusion5.skillasaservice.user_service.dto.response.UserResponse;
+import com.fusion5.skillasaservice.user_service.entity.Permission;
 import com.fusion5.skillasaservice.user_service.entity.Role;
 import com.fusion5.skillasaservice.user_service.entity.User;
 import com.fusion5.skillasaservice.user_service.exception.BadRequestException;
 import com.fusion5.skillasaservice.user_service.exception.ResourceNotFoundException;
+import com.fusion5.skillasaservice.user_service.repository.PermissionRepository;
 import com.fusion5.skillasaservice.user_service.repository.RoleRepository;
 import com.fusion5.skillasaservice.user_service.repository.UserRepository;
 import org.springframework.data.domain.Page;
@@ -26,10 +29,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PermissionRepository permissionRepository;
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PermissionRepository permissionRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.permissionRepository = permissionRepository;
     }
 
     public PagedUserResponse listUsers(int page, int size, String search, String status) {
@@ -123,6 +128,35 @@ public class UserService {
         user.setRoles(newRoles);
         User saved = userRepository.save(user);
         return toResponse(saved);
+    }
+
+    public java.util.List<String> listAllPermissionTags() {
+        return permissionRepository.findAll().stream()
+                .map(Permission::getPermissionName)
+                .collect(Collectors.toList());
+    }
+
+    public java.util.List<String> getUserPermissions(Long id) {
+        User user = findUserOrThrow(id);
+        return user.getPermissions().stream().map(Permission::getPermissionName).collect(Collectors.toList());
+    }
+
+    /** Full-replace semantics, same as assignRoles. Does not check the target user's role
+     *  here — permissions are only meaningful for ADMIN accounts, but there's no harm in
+     *  storing them on a non-admin account (they'd just never be checked against anything). */
+    @Transactional
+    public java.util.List<String> updateUserPermissions(Long id, UpdatePermissionsRequest request) {
+        User user = findUserOrThrow(id);
+
+        Set<Permission> newPermissions = new HashSet<>();
+        for (String tag : request.getPermissions()) {
+            Permission p = permissionRepository.findByPermissionName(tag.toUpperCase())
+                    .orElseThrow(() -> new BadRequestException("Invalid permission tag: " + tag));
+            newPermissions.add(p);
+        }
+        user.setPermissions(newPermissions);
+        userRepository.save(user);
+        return newPermissions.stream().map(Permission::getPermissionName).collect(Collectors.toList());
     }
 
     private User findUserOrThrow(Long id) {

@@ -38,20 +38,20 @@ public class MenuController {
     // ── Admin ───────────────────────────────────────────────────────────────
 
     @PostMapping("/api/admin/cms/menus")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_CMS')")
     public ResponseEntity<ApiResponse<Menu>> create(@Valid @RequestBody CreateMenuRequest req) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Menu created", menuService.create(req)));
     }
 
     /** PUT /api/admin/cms/menus/{id} — replaces the ENTIRE item list for this menu */
     @PutMapping("/api/admin/cms/menus/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_CMS')")
     public ResponseEntity<ApiResponse<MenuResponseDto>> replaceItems(@PathVariable Long id, @Valid @RequestBody UpdateMenuItemsRequest req) {
         return ResponseEntity.ok(ApiResponse.success("Menu items updated", menuService.replaceItems(id, req)));
     }
 
     @DeleteMapping("/api/admin/cms/menus/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_CMS')")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         menuService.delete(id);
         return ResponseEntity.ok(ApiResponse.success("Menu deleted", null));

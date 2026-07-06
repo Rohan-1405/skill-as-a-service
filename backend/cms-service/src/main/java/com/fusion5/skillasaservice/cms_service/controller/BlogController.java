@@ -56,7 +56,7 @@ public class BlogController {
      *  Not in the original 17-endpoint spec, added because an admin blog list screen
      *  needs to see drafts, which the public endpoint deliberately excludes. */
     @GetMapping("/api/admin/cms/blogs")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_CMS')")
     public ResponseEntity<ApiResponse<Page<Blog>>> listAllForAdmin(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
@@ -65,26 +65,26 @@ public class BlogController {
     }
 
     @PostMapping("/api/admin/cms/blogs")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_CMS')")
     public ResponseEntity<ApiResponse<Blog>> create(@Valid @RequestBody CreateBlogRequest req) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Blog created", blogService.create(req)));
     }
 
     @PutMapping("/api/admin/cms/blogs/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_CMS')")
     public ResponseEntity<ApiResponse<Blog>> update(@PathVariable Long id, @Valid @RequestBody UpdateBlogRequest req) {
         return ResponseEntity.ok(ApiResponse.success("Blog updated", blogService.update(id, req)));
     }
 
     @DeleteMapping("/api/admin/cms/blogs/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_CMS')")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         blogService.delete(id);
         return ResponseEntity.ok(ApiResponse.success("Blog deleted", null));
     }
 
     @PostMapping("/api/admin/cms/categories")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_CMS')")
     public ResponseEntity<ApiResponse<BlogCategory>> createCategory(@Valid @RequestBody CreateCategoryRequest req) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Category created", categoryService.create(req)));
     }

@@ -27,13 +27,13 @@ public class ThemeController {
     }
 
     @GetMapping("/api/admin/theme/settings")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_CMS')")
     public ResponseEntity<ApiResponse<ThemeSetting>> getAdmin() {
         return ResponseEntity.ok(ApiResponse.success("OK", themeSettingService.get()));
     }
 
     @PutMapping("/api/admin/theme/settings")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_CMS')")
     public ResponseEntity<ApiResponse<ThemeSetting>> update(@Valid @RequestBody UpdateThemeSettingsRequest req) {
         return ResponseEntity.ok(ApiResponse.success("Theme updated", themeSettingService.update(req)));
     }

@@ -64,31 +64,31 @@ public class AnalyticsController {
     // ── Admin ───────────────────────────────────────────────────────────────
 
     @GetMapping("/api/admin/analytics/revenue")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_ANALYTICS')")
     public ApiResponse<RevenueSummaryDto> adminRevenue() {
         return ApiResponse.success("OK", analyticsService.adminRevenue());
     }
 
     @GetMapping("/api/admin/analytics/users")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_ANALYTICS')")
     public ApiResponse<UserGrowthDto> adminUsers() {
         return ApiResponse.success("OK", analyticsService.adminUsers());
     }
 
     @GetMapping("/api/admin/analytics/kyc")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_ANALYTICS')")
     public ApiResponse<KycStatsDto> adminKyc() {
         return ApiResponse.success("OK", analyticsService.adminKyc());
     }
 
     @GetMapping("/api/admin/analytics/transactions")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_ANALYTICS')")
     public ApiResponse<TransactionStatsDto> adminTransactions() {
         return ApiResponse.success("OK", analyticsService.adminTransactions());
     }
 
     @GetMapping("/api/admin/analytics/dashboard")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_ANALYTICS')")
     public ApiResponse<AdminDashboardDto> adminDashboard() {
         return ApiResponse.success("OK", analyticsService.adminDashboard());
     }

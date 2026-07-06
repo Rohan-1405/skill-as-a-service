@@ -103,9 +103,12 @@ public class TwoFactorController {
         List<String> roles = user.getRoles().stream()
                 .map(Role::getRoleName)
                 .collect(Collectors.toList());
+        List<String> permissions = roles.contains("ADMIN")
+                ? user.getPermissions().stream().map(com.fusion5.skillasaservice.auth_service.entity.Permission::getPermissionName).collect(Collectors.toList())
+                : List.of();
 
         // Generate and store tokens exactly as AuthService.login() does
-        String accessToken  = jwtUtil.generateAccessToken(user.getUuid(), user.getEmail(), roles);
+        String accessToken  = jwtUtil.generateAccessToken(user.getUuid(), user.getEmail(), roles, permissions);
         String refreshToken = jwtUtil.generateRefreshToken(user.getUuid());
 
         redisTemplate.opsForValue().set("access_token:"  + user.getUuid(), accessToken,  15, TimeUnit.MINUTES);
@@ -118,6 +121,7 @@ public class TwoFactorController {
                         .userId(user.getUuid())
                         .email(user.getEmail())
                         .roles(roles)
+                        .permissions(permissions)
                         .message("Login successful")
                         .build()));
     }

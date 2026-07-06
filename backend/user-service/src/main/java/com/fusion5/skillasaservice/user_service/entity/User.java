@@ -65,6 +65,17 @@ public class User {
     )
     private Set<Role> roles = new HashSet<>();
 
+    /** Admin sub-permissions — only meaningful when this user has the ADMIN role.
+     *  SUPER_ADMIN bypasses permission checks via role, not this set. */
+    @Builder.Default
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "admin_user_permissions",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "permission_id")
+    )
+    private Set<Permission> permissions = new HashSet<>();
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin/payment/gateways")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+@PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_PAYMENTS')")
 public class PaymentGatewayController {
 
     private final PaymentGatewayService gatewayService;

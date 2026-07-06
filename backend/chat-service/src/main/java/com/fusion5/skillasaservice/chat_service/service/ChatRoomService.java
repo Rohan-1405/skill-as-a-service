@@ -84,9 +84,13 @@ public class ChatRoomService {
             if (req.getName() == null || req.getName().isBlank()) {
                 throw new BadRequestException("name is required for GROUP rooms");
             }
+            if (req.getProjectId() != null && chatRoomRepository.findByProjectId(req.getProjectId()).isPresent()) {
+                throw new BadRequestException("A group room already exists for project " + req.getProjectId());
+            }
             ChatRoom room = new ChatRoom();
             room.setRoomType(ChatRoom.RoomType.GROUP);
             room.setName(req.getName().trim());
+            room.setProjectId(req.getProjectId());
             ChatRoom saved = chatRoomRepository.saveAndFlush(room);
 
             addMember(saved.getId(), callerId);

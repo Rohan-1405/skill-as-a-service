@@ -28,20 +28,20 @@ public class SkillController {
 
     // US-PROF-07 - ADMIN and SUPER_ADMIN only
     @PostMapping("/api/admin/skills")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_SETTINGS')")
     @ResponseStatus(HttpStatus.CREATED)
     public SkillResponse createSkill(@Valid @RequestBody CreateSkillRequest request) {
         return skillService.createSkill(request);
     }
 
     @PutMapping("/api/admin/skills/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_SETTINGS')")
     public SkillResponse updateSkill(@PathVariable Long id, @Valid @RequestBody UpdateSkillRequest request) {
         return skillService.updateSkill(id, request);
     }
 
     @DeleteMapping("/api/admin/skills/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_SETTINGS')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteSkill(@PathVariable Long id) {
         skillService.softDeleteSkill(id);

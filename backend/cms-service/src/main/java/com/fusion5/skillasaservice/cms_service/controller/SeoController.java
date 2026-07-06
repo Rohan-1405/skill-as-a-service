@@ -31,13 +31,13 @@ public class SeoController {
     }
 
     @GetMapping("/api/admin/seo/settings")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_CMS')")
     public ResponseEntity<ApiResponse<SeoSetting>> getSettings() {
         return ResponseEntity.ok(ApiResponse.success("OK", seoService.getSettings()));
     }
 
     @PutMapping("/api/admin/seo/settings")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_CMS')")
     public ResponseEntity<ApiResponse<SeoSetting>> updateSettings(@Valid @RequestBody UpdateSeoSettingsRequest req) {
         return ResponseEntity.ok(ApiResponse.success("SEO settings updated", seoService.updateSettings(req)));
     }

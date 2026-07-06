@@ -38,7 +38,7 @@ public class KycController {
     // ── Admin endpoints ───────────────────────────────────────────────────────
 
     @GetMapping("/api/admin/kyc")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_KYC')")
     public Page<KycDocument> listAll(
             @RequestParam(required = false) String status,
             @RequestParam(defaultValue = "0")  int page,
@@ -48,13 +48,13 @@ public class KycController {
     }
 
     @PutMapping("/api/admin/kyc/{id}/approve")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_KYC')")
     public KycDocument approve(@PathVariable Long id) {
         return kycService.approve(id);
     }
 
     @PutMapping("/api/admin/kyc/{id}/reject")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasAuthority('PERM_KYC')")
     public KycDocument reject(@PathVariable Long id, @Valid @RequestBody KycRejectRequest request) {
         return kycService.reject(id, request);
     }
