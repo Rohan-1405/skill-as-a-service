@@ -19,4 +19,7 @@ public class NotificationEvent {
 
     /** If true and the user has an email on file, also send an email. */
     private boolean sendEmail;
+
+    /** If true and the user has registered device token(s) and push is enabled/configured, also send a push notification. */
+    private boolean sendPush;
 }

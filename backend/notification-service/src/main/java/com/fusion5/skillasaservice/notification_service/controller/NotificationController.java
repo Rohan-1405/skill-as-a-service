@@ -1,10 +1,14 @@
 package com.fusion5.skillasaservice.notification_service.controller;
 
 import com.fusion5.skillasaservice.notification_service.dto.request.CreateNotificationRequest;
+import com.fusion5.skillasaservice.notification_service.dto.request.RegisterDeviceTokenRequest;
 import com.fusion5.skillasaservice.notification_service.dto.request.UpdateNotificationPreferenceRequest;
 import com.fusion5.skillasaservice.notification_service.dto.response.ApiResponse;
+import com.fusion5.skillasaservice.notification_service.entity.DeviceToken;
 import com.fusion5.skillasaservice.notification_service.entity.Notification;
 import com.fusion5.skillasaservice.notification_service.entity.NotificationPreference;
+import com.fusion5.skillasaservice.notification_service.repository.DeviceTokenRepository;
+import com.fusion5.skillasaservice.notification_service.security.CurrentUserResolver;
 import com.fusion5.skillasaservice.notification_service.service.NotificationPreferenceService;
 import com.fusion5.skillasaservice.notification_service.service.NotificationService;
 import jakarta.validation.Valid;
@@ -25,6 +29,8 @@ public class NotificationController {
 
     private final NotificationService notificationService;
     private final NotificationPreferenceService preferenceService;
+    private final DeviceTokenRepository deviceTokenRepository;
+    private final CurrentUserResolver currentUserResolver;
 
     /** GET /api/notifications?page=0&size=20 — my notifications, newest first */
     @GetMapping
@@ -62,7 +68,7 @@ public class NotificationController {
     @PostMapping
     public ResponseEntity<ApiResponse<Notification>> create(@Valid @RequestBody CreateNotificationRequest req) {
         Notification n = notificationService.create(
-                req.getUserId(), req.getTitle(), req.getMessage(), req.getType(), req.isSendEmail());
+                req.getUserId(), req.getTitle(), req.getMessage(), req.getType(), req.isSendEmail(), req.isSendPush());
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Notification created", n));
     }
 
@@ -84,5 +90,30 @@ public class NotificationController {
     public ResponseEntity<ApiResponse<NotificationPreference>> updatePreferences(
             @RequestBody UpdateNotificationPreferenceRequest req) {
         return ResponseEntity.ok(ApiResponse.success("Preferences updated", preferenceService.updateMine(req)));
+    }
+
+    /** POST /api/notifications/device-token — register (or re-register) a device for push.
+     *  Call this after the client obtains an FCM token, e.g. on login or token refresh. */
+    @PostMapping("/device-token")
+    public ResponseEntity<ApiResponse<DeviceToken>> registerDeviceToken(@Valid @RequestBody RegisterDeviceTokenRequest req) {
+        Long userId = currentUserResolver.getCurrentUserId();
+        DeviceToken token = deviceTokenRepository.findByFcmToken(req.getFcmToken()).orElseGet(DeviceToken::new);
+        token.setUserId(userId);
+        token.setFcmToken(req.getFcmToken());
+        try {
+            token.setPlatform(DeviceToken.Platform.valueOf(req.getPlatform().toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("Invalid platform: " + req.getPlatform()));
+        }
+        DeviceToken saved = deviceTokenRepository.saveAndFlush(token);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Device registered", saved));
+    }
+
+    /** DELETE /api/notifications/device-token/{fcmToken} — call on logout so this device
+     *  stops receiving push after sign-out. */
+    @DeleteMapping("/device-token/{fcmToken}")
+    public ResponseEntity<ApiResponse<Void>> unregisterDeviceToken(@PathVariable String fcmToken) {
+        deviceTokenRepository.deleteByFcmToken(fcmToken);
+        return ResponseEntity.ok(ApiResponse.success("Device unregistered", null));
     }
 }

@@ -22,7 +22,7 @@ public class NotificationEventConsumer {
             }
             notificationService.create(
                     event.getUserId(), event.getTitle(), event.getMessage(),
-                    event.getType(), event.isSendEmail());
+                    event.getType(), event.isSendEmail(), event.isSendPush());
         } catch (Exception e) {
             // Never let a bad event crash the listener thread — log and move on.
             log.error("Failed to process NotificationEvent for user {}: {}",

@@ -16,4 +16,5 @@ public class NotificationEvent {
     private String message;
     private String type;
     private boolean sendEmail;
+    private boolean sendPush;
 }

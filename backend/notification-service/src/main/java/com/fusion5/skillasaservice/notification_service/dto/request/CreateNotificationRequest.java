@@ -25,4 +25,7 @@ public class CreateNotificationRequest {
 
     /** If true, also attempts to send this as an email to the user's registered address. */
     private boolean sendEmail = false;
+
+    /** If true, also attempts to send this as a push notification to the user's registered device(s). */
+    private boolean sendPush = false;
 }

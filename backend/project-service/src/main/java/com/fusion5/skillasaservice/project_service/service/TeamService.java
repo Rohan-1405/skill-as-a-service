@@ -225,4 +225,79 @@ public class TeamService {
                 .orElseThrow(() -> new ForbiddenException("You are not a member of this team"));
         if (me.getRole() == TeamRole.MEMBER) throw new ForbiddenException("Only team admin or owner can do this");
     }
+
+    // ── Standalone /api/teams resource (mirrors the /api/projects/{id}/team/** methods
+    //    above, addressed by teamId directly instead of via projectId). Creation is
+    //    intentionally NOT duplicated here — a team always requires a projectId at
+    //    creation time (one-team-per-project is enforced), so "POST /api/teams" with no
+    //    project context doesn't fit this data model. Create via the nested endpoint,
+    //    then manage via either shape afterward. ──────────────────────────────────────
+
+    /** All teams the caller owns or is a member of. */
+    public List<Team> listMyTeams() {
+        Long userId = currentUserResolver.getCurrentUserId();
+        List<Long> teamIds = teamMemberRepository.findByUserId(userId).stream()
+                .map(TeamMember::getTeamId).distinct().collect(Collectors.toList());
+        return teamRepository.findAllById(teamIds);
+    }
+
+    public Team getTeamById(Long teamId) {
+        return teamRepository.findById(teamId)
+                .orElseThrow(() -> new ResourceNotFoundException("Team not found: " + teamId));
+    }
+
+    @Transactional
+    public Team renameTeamById(Long teamId, UpdateTeamRequest req) {
+        Long userId = currentUserResolver.getCurrentUserId();
+        Team team = getTeamById(teamId);
+        requireOwner(team, userId);
+        team.setName(req.getName().trim());
+        return teamRepository.saveAndFlush(team);
+    }
+
+    @Transactional
+    public void deleteTeamById(Long teamId) {
+        Long userId = currentUserResolver.getCurrentUserId();
+        Team team = getTeamById(teamId);
+        requireOwner(team, userId);
+        teamMemberRepository.deleteAll(teamMemberRepository.findByTeamId(team.getId()));
+        teamRepository.delete(team);
+        log.info("Team {} deleted (via standalone /api/teams)", teamId);
+    }
+
+    @Transactional
+    public TeamMember inviteMemberByTeamId(Long teamId, InviteMemberRequest req) {
+        return inviteMember(getTeamById(teamId).getProjectId(), req);
+    }
+
+    @Transactional
+    public void removeMemberByUserId(Long teamId, Long targetUserId) {
+        Long callerId = currentUserResolver.getCurrentUserId();
+        Team team = getTeamById(teamId);
+        requireAdminOrOwner(team, callerId);
+
+        TeamMember member = teamMemberRepository.findByTeamIdAndUserId(teamId, targetUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("This user is not a member of this team"));
+        if (member.getRole() == TeamRole.OWNER) throw new BadRequestException("Cannot remove the team owner");
+        teamMemberRepository.delete(member);
+    }
+
+    @Transactional
+    public TeamMember updateRoleByUserId(Long teamId, Long targetUserId, UpdateMemberRoleRequest req) {
+        Long callerId = currentUserResolver.getCurrentUserId();
+        Team team = getTeamById(teamId);
+        requireOwner(team, callerId);
+
+        TeamMember member = teamMemberRepository.findByTeamIdAndUserId(teamId, targetUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("This user is not a member of this team"));
+        if (member.getRole() == TeamRole.OWNER) throw new BadRequestException("Cannot change OWNER role");
+
+        TeamRole newRole;
+        try { newRole = TeamRole.valueOf(req.getRole().toUpperCase()); }
+        catch (IllegalArgumentException e) { throw new BadRequestException("Invalid role: " + req.getRole()); }
+        if (newRole == TeamRole.OWNER) throw new BadRequestException("Cannot assign OWNER role");
+
+        member.setRole(newRole);
+        return teamMemberRepository.saveAndFlush(member);
+    }
 }

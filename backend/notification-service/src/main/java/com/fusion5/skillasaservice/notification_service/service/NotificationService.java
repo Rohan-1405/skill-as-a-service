@@ -26,11 +26,13 @@ public class NotificationService {
     private final CurrentUserResolver currentUserResolver;
     private final EmailService emailService;
     private final NotificationPreferenceService preferenceService;
+    private final PushNotificationService pushNotificationService;
 
     /** Creates the in-app notification (unless the user disabled in-app), and best-effort
-     *  sends an email if requested AND the user hasn't disabled email notifications. */
+     *  sends an email and/or push if requested AND the user hasn't disabled that channel. */
     @Transactional
-    public Notification create(Long userId, String title, String message, String typeRaw, boolean sendEmail) {
+    public Notification create(Long userId, String title, String message, String typeRaw,
+                                boolean sendEmail, boolean sendPush) {
         NotificationType type = parseType(typeRaw);
         NotificationPreference prefs = preferenceService.getOrCreate(userId);
 
@@ -46,6 +48,15 @@ public class NotificationService {
             n.setEmailSent(sent);
         } else if (sendEmail) {
             log.info("Skipped email for user {} — email notifications disabled in preferences", userId);
+        }
+
+        if (sendPush && prefs.isPushEnabled()) {
+            // Best-effort, never throws — see PushNotificationService for the no-op-if-
+            // unconfigured behavior. Not tracked on the entity (no pushSent column) since
+            // there's no per-send success/failure signal worth persisting yet.
+            pushNotificationService.send(userId, title, message);
+        } else if (sendPush) {
+            log.info("Skipped push for user {} — push notifications disabled in preferences", userId);
         }
 
         if (!prefs.isInAppEnabled()) {
